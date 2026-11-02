@@ -1,0 +1,782 @@
+<!doctype html>
+<!--
+  The Shepherd's Dog: the electric field and the motion of electricity, in eight rooms
+  Copyright (C) 2026 AirplaneBug (https://airplanebug.io)
+  Made by AirplaneBug using Claude.
+
+  SPDX-License-Identifier: AGPL-3.0-or-later
+
+  This program is free software: you can redistribute it and/or modify it under the
+  terms of the GNU Affero General Public License as published by the Free Software
+  Foundation, either version 3 of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+  You should have received a copy of the license with this program (see LICENSE);
+  if not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Shepherd's Dog</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="A walk-through museum in eight rooms: the sheepdog-and-flock analogy for the electric field, drift, resistance, heat, Ohm's law, and the speed of the field, with a working model in each room. Runs entirely offline.">
+<style>
+/* Layout: a linear museum. Masthead, a floor plan of eight rooms, then one room at a time:
+   a walnut-framed diorama case with its levers beneath, and the essay placard beside it (below it when narrow).
+   Look: gallery wall paper in sage, walnut frames, brass plaques, a period textbook face for the placards. */
+:root{
+  --wall:#d5d9c4; --stripe:rgba(60,72,40,.07); --card:#f4eedb; --card-2:#e8dfc4;
+  --ink:#2a231b; --ink-2:#5a5043; --rule:rgba(42,35,27,.24); --shade:rgba(42,35,27,.30);
+  --frame:#5b3c24; --frame-2:#3a2616; --brass:#9c7224; --brass-hi:#d8b464; --plaque-ink:#2a1d0c;
+  --accent:#3c6a2e; --on-accent:#fbf6e6; --focus:#1b5d8e; --title:#2f3b25; --title-sh:#c6a457;
+  --s1:#3c6a2e; --s2:#a6701c; --s3:#1b5d8e; --s4:#8a3b62; --s5:#5a5043;
+  --f-display:"Cooper Black","Cooper Std","Cooper BT","Windsor","Bookman Old Style","URW Bookman","URW Bookman L","Gelasio",Georgia,"Noto Serif","DejaVu Serif",serif;
+  --f-body:"Century Schoolbook","New Century Schoolbook","C059","Century Schoolbook L","TeX Gyre Schola","Bookman Old Style",Georgia,"Noto Serif","Droid Serif","DejaVu Serif",serif;
+  --f-label:"Futura","Century Gothic","URW Gothic","URW Gothic L","Gill Sans","Gill Sans MT","Avenir Next","Trebuchet MS","Noto Sans",Roboto,"DejaVu Sans",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --wall:#161b17; --stripe:rgba(200,220,170,.035); --card:#23281f; --card-2:#2d3328;
+    --ink:#e9e1ca; --ink-2:#b2a993; --rule:rgba(233,225,202,.2); --shade:rgba(0,0,0,.55);
+    --frame:#3b2919; --frame-2:#22170d; --brass:#c9a452; --brass-hi:#e3c67e; --plaque-ink:#1d1406;
+    --accent:#8fc274; --on-accent:#13200e; --focus:#7cc3ef; --title:#cdc3a4; --title-sh:#5a4a1e;
+    --s1:#8fc274; --s2:#e0aa4e; --s3:#7cc3ef; --s4:#e58fb9; --s5:#b2a993; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --wall:#161b17; --stripe:rgba(200,220,170,.035); --card:#23281f; --card-2:#2d3328;
+  --ink:#e9e1ca; --ink-2:#b2a993; --rule:rgba(233,225,202,.2); --shade:rgba(0,0,0,.55);
+  --frame:#3b2919; --frame-2:#22170d; --brass:#c9a452; --brass-hi:#e3c67e; --plaque-ink:#1d1406;
+  --accent:#8fc274; --on-accent:#13200e; --focus:#7cc3ef; --title:#cdc3a4; --title-sh:#5a4a1e;
+  --s1:#8fc274; --s2:#e0aa4e; --s3:#7cc3ef; --s4:#e58fb9; --s5:#b2a993; color-scheme:dark;
+}
+:root[data-theme="light"]{color-scheme:light}
+*{box-sizing:border-box}
+html{font-size:100%}
+@media (max-width:18em){html{font-size:87.5%}}
+@media (min-width:100em){html{font-size:118%}}
+@media (min-width:150em){html{font-size:160%}}
+body{margin:0;background-color:var(--wall);color:var(--ink);
+  background-image:repeating-linear-gradient(90deg,transparent 0 1.4rem,var(--stripe) 1.4rem 1.5rem);
+  font-family:var(--f-body);font-size:1rem;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:.5rem 2rem}
+@media (max-width:20em){body{padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}}
+#app{max-width:100rem;margin:0 auto}
+a{color:var(--accent)}
+h1,h2,h3,p,li,dt,dd,label,button,summary,output{overflow-wrap:anywhere;min-width:0}
+button,input,select{font:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.vh{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+.skip{position:absolute;left:.5rem;top:-5rem;z-index:100;padding:.45rem .8rem;border:2px solid var(--ink);border-radius:6px;background:var(--brass-hi);color:var(--plaque-ink);font:700 .85rem var(--f-label);text-decoration:none}
+.skip:focus{top:.5rem}
+
+/* masthead */
+.mast{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:.4rem 1rem;padding:.3rem 0 .5rem;position:relative}
+.mast-txt{flex:1 1 18rem;min-width:0}
+.kicker{margin:0;font:600 .7rem/1.4 var(--f-label);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2)}
+h1{margin:.08em 0 0;font-family:var(--f-display);font-weight:900;line-height:1.02;letter-spacing:-.005em;
+  font-size:2rem;font-size:clamp(1.55rem,1.25rem + 2.4vw,3.3rem);text-wrap:balance;color:var(--title);text-shadow:.04em .04em 0 var(--title-sh)}
+.dek{margin:.35rem 0 0;max-width:44rem;font-style:italic;color:var(--ink-2)}
+
+/* settings */
+.setwrap{position:relative;flex:none}
+.pill{display:inline-flex;align-items:center;gap:.35em;padding:.22rem .7rem;border:1.5px solid var(--ink-2);border-radius:999px;background:transparent;color:var(--ink-2);
+  font:600 .72rem/1.3 var(--f-label);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.pill:hover,.pill[aria-expanded="true"]{color:var(--ink);border-color:var(--ink)}
+.pill svg{width:1em;height:1em;flex:none}
+.setpop{position:absolute;right:0;top:calc(100% + .3rem);z-index:30;width:min(21rem,calc(100vw - 1.5rem));max-height:min(80vh,32rem);overflow:auto;
+  padding:.7rem .85rem .85rem;background:var(--card);color:var(--ink);border:2px solid var(--ink);border-radius:10px;box-shadow:4px 4px 0 var(--shade);font-size:.9rem}
+@media (max-width:30em){.setpop{position:fixed;left:50%;right:auto;top:50%;transform:translate(-50%,-50%);max-height:calc(100vh - 2rem)}}
+.setpop h2{margin:0 0 .3rem;font:900 1rem/1.2 var(--f-display)}
+.sl{display:block;margin:.6rem 0 .15rem;font:600 .68rem var(--f-label);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.scap{margin:.25rem 0 0;font-size:.76rem;font-style:italic;color:var(--ink-2)}
+.srow{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.8rem}
+
+/* shared small controls */
+.seg{display:flex;flex-wrap:wrap;gap:.3rem;margin:.2rem 0 0}
+.seg button,.btn,.srow button{padding:.24rem .7rem;border:2px solid var(--ink);border-radius:999px;background:var(--card);color:var(--ink);
+  font:600 .78rem/1.3 var(--f-label);cursor:pointer;max-width:100%;white-space:normal;text-align:center}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+.btn{background:var(--brass-hi);color:var(--plaque-ink);border-color:var(--frame-2);box-shadow:2px 2px 0 var(--shade)}
+.btn:active{transform:translate(2px,2px);box-shadow:none}
+.chk{display:flex;align-items:flex-start;gap:.5rem;margin:.3rem 0;font:600 .8rem/1.35 var(--f-label)}
+.chk input{flex:none;width:1.1rem;height:1.1rem;margin:.05rem 0 0;accent-color:var(--accent)}
+
+/* floor plan */
+.plan{margin:.2rem 0 .8rem}
+.plan ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.35rem}
+.plan button{display:flex;align-items:center;gap:.4em;max-width:100%;padding:.22rem .65rem .22rem .25rem;border:2px solid var(--frame);border-radius:6px;
+  background:var(--card);color:var(--ink);font:600 .78rem/1.25 var(--f-label);cursor:pointer;text-align:left}
+.plan button i{flex:none;font:900 .78rem/1 var(--f-display);font-style:normal;min-width:2.1em;padding:.32em .3em;border-radius:3px;background:var(--frame);color:var(--brass-hi);text-align:center}
+.plan button[aria-current="step"]{background:var(--brass-hi);color:var(--plaque-ink);border-color:var(--frame-2);box-shadow:3px 3px 0 var(--shade)}
+.plan button[aria-current="step"] i{background:var(--frame-2)}
+.plan button.seen:not([aria-current]) i{background:var(--accent);color:var(--on-accent)}
+
+/* the room */
+.room{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;
+  grid-template-areas:"head" "case" "levers" "placard" "doors"}
+@media (min-width:64em){
+  .room{grid-template-columns:minmax(0,1.6fr) minmax(19rem,1fr);grid-template-areas:"head head" "case placard" "levers placard" "doors doors";align-items:start}
+}
+.roomhead{grid-area:head;min-width:0}
+.roomno{margin:0;font:600 .7rem var(--f-label);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2)}
+.roomhead h2{margin:.05rem 0 0;font:900 1.35rem/1.15 var(--f-display);text-wrap:balance}
+.roomhead h2:focus{outline:none}.roomhead h2:focus-visible{outline:3px solid var(--focus)}
+.case{grid-area:case;min-width:0}
+.vitrine{padding:clamp(4px,1.1vw,12px);border-radius:6px;background:linear-gradient(135deg,var(--frame),var(--frame-2));box-shadow:5px 6px 0 var(--shade)}
+.stage{position:relative;height:13rem;height:clamp(11rem,58vw,34rem);max-height:85vh;border:2px solid var(--brass);border-radius:3px;overflow:hidden;background:#7fbf4a}
+@media (min-width:64em){.stage{height:min(calc(100vh - 15rem),38rem);min-height:21rem}}
+#cv{display:block;width:100%;height:100%}
+.tools{position:absolute;left:.4rem;right:.4rem;bottom:.4rem;display:flex;flex-wrap:wrap;gap:.3rem;pointer-events:none}
+.tools button{pointer-events:auto;padding:.14rem .6rem;border:1.5px solid #f6efd9;border-radius:999px;background:rgba(32,26,16,.72);color:#f6efd9;
+  font:600 .7rem/1.3 var(--f-label);letter-spacing:.05em;cursor:pointer;max-width:100%}
+.tools button[aria-pressed="true"]{background:#d8b464;color:#2a1d0c;border-color:#d8b464}
+@media (max-width:20em){.tools button{padding:.1rem .4rem;font-size:.64rem}}
+.plaque{margin:.55rem auto 0;width:fit-content;max-width:100%;padding:.3rem 1rem;border-radius:3px;
+  background:linear-gradient(180deg,var(--brass-hi),var(--brass));color:var(--plaque-ink);box-shadow:1px 2px 0 var(--shade);
+  font:600 .74rem/1.35 var(--f-label);letter-spacing:.1em;text-transform:uppercase;text-align:center}
+
+.card{background:var(--card);border:1.5px solid var(--rule);border-radius:4px;box-shadow:3px 4px 0 var(--shade);padding:.8rem .95rem .95rem;min-width:0}
+.card h3{margin:0 0 .45rem;font:900 1rem/1.2 var(--f-display)}
+.levers{grid-area:levers;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:.6rem 1.4rem}
+.levers>div{min-width:0}
+.ctl{margin:0 0 .75rem}
+.ctl>label,.ctl>.lbl{display:flex;flex-wrap:wrap;justify-content:space-between;gap:0 .6em;font:600 .74rem/1.35 var(--f-label);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2)}
+.ctl output{font-variant-numeric:tabular-nums;color:var(--ink);letter-spacing:0;text-transform:none}
+.ctl input[type=range]{width:100%;margin:.2rem 0 0;min-height:1.5rem;accent-color:var(--accent)}
+.none{margin:0;font-style:italic;color:var(--ink-2)}
+dl.ro{margin:0}
+dl.ro div{display:flex;flex-wrap:wrap;justify-content:space-between;gap:0 .8rem;padding:.22rem 0;border-bottom:1px dotted var(--rule)}
+dl.ro dt{font:600 .72rem/1.4 var(--f-label);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2)}
+dl.ro dd{margin:0;margin-left:auto;font-variant-numeric:tabular-nums;text-align:right;font-size:.92rem}
+.logwrap{grid-column:1 / -1;min-width:0}
+.logwrap canvas{display:block;width:100%;height:11rem;border:1px solid var(--rule);border-radius:3px;background:var(--card-2)}
+.legend{margin:.35rem 0 0;padding:0;list-style:none;font-size:.82rem}
+.legend li{display:flex;align-items:baseline;gap:.45rem}
+.legend b{flex:none;display:inline-block;width:.75rem;height:.75rem;border-radius:50%}
+
+.placard{grid-area:placard;padding:1rem 1.15rem 1.15rem;background:var(--card);border-top:6px double var(--frame)}
+.pl-k{margin:0 0 .35rem;font:600 .68rem var(--f-label);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.essay{margin:0;max-width:40rem;font-size:1.02rem;line-height:1.62;hyphens:auto;text-align:left}
+.essay::first-letter{font-family:var(--f-display);font-size:2.6em;float:left;line-height:.9;padding:.06em .08em 0 0;color:var(--accent)}
+.placard h3{margin:1rem 0 .3rem;font:900 .95rem/1.2 var(--f-display)}
+.dirs{margin:0;max-width:40rem}
+.margin{margin-top:.9rem;padding:.55rem .75rem;border-left:4px solid var(--brass);background:var(--card-2);font-size:.88rem}
+.margin h3{margin:0 0 .2rem}
+.margin p{margin:0}
+
+.doors{grid-area:doors;display:flex;flex-wrap:wrap;justify-content:space-between;gap:.6rem}
+.door{display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;max-width:100%;padding:.5rem .9rem;border:2px solid var(--frame);border-radius:6px 6px 2px 2px;
+  background:var(--card);color:var(--ink);cursor:pointer;text-align:left;box-shadow:3px 3px 0 var(--shade)}
+.door small{font:600 .66rem var(--f-label);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.door span{font:900 .95rem/1.2 var(--f-display)}
+.door.next{margin-left:auto;align-items:flex-end;text-align:right;background:var(--brass-hi);color:var(--plaque-ink);border-color:var(--frame-2)}
+.door.next small{color:var(--plaque-ink)}
+.door[hidden]{display:none}
+
+footer{margin-top:1.6rem;padding-top:.7rem;border-top:1px solid var(--rule);font:600 .72rem/1.7 var(--f-label);letter-spacing:.04em;color:var(--ink-2)}
+footer p{margin:0}
+footer a{color:inherit}
+.disc{margin-top:.35rem!important;font:italic .76rem/1.45 var(--f-body);letter-spacing:0}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+@media (forced-colors:active){.plan button[aria-current="step"],.seg button[aria-pressed="true"],.tools button[aria-pressed="true"]{forced-color-adjust:none;background:Highlight;color:HighlightText}}
+</style>
+
+</head>
+<body>
+<div id="app">
+<a class="skip" href="#roomTitle">Skip to the current room</a>
+<header class="mast">
+  <div class="mast-txt">
+    <p class="kicker">A small museum of the electric field, in eight rooms</p>
+    <h1>The Shepherd's Dog</h1>
+    <p class="dek">On the Electric Field and the Motion of Electricity, Illustrated by the Shepherd's Dog</p>
+  </div>
+  <div class="setwrap">
+    <button id="setBtn" class="pill" type="button" aria-expanded="false" aria-controls="setPop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/><circle cx="8" cy="6" r="2.4" fill="var(--card)"/><circle cx="16" cy="12" r="2.4" fill="var(--card)"/><circle cx="10" cy="18" r="2.4" fill="var(--card)"/></svg><span>Settings</span></button>
+    <div id="setPop" class="setpop" role="dialog" aria-label="Settings" hidden>
+      <h2>Settings</h2>
+      <span class="sl" id="slMode">Appearance</span>
+      <div class="seg" role="group" aria-labelledby="slMode"><button type="button" data-mode="system">System</button><button type="button" data-mode="light">Day</button><button type="button" data-mode="dark">Dusk</button></div>
+      <span class="sl">The diorama and its tallies</span>
+      <label class="chk"><input id="sCalm" type="checkbox" checked>Calm tallies: numbers change at most about once a second</label>
+      <label class="chk"><input id="sLab" type="checkbox" checked>Show labels inside the diorama</label>
+      <label class="chk"><input id="sLite" type="checkbox">Lite mode: fewer sheep and a coarser picture, for older machines</label>
+      <label class="chk"><input id="sRM" type="checkbox">Reduce motion: each room opens paused</label>
+      <p class="scap" id="liteCap"></p>
+      <span class="sl">Keys</span>
+      <p class="scap">[ and ] go to the previous or next room. P pauses or resumes the diorama. Esc closes this menu.</p>
+      <div class="srow"><button type="button" id="sReset">Reset to defaults</button><button type="button" id="sClose">Close</button></div>
+    </div>
+  </div>
+</header>
+
+<nav class="plan" aria-label="Floor plan of the rooms"><ol id="plan"></ol></nav>
+
+<main class="room" id="room">
+  <div class="roomhead"><p class="roomno" id="roomNo">Room I of VIII</p><h2 id="roomTitle" tabindex="-1">Loading</h2></div>
+  <section class="case" aria-label="The diorama">
+    <div class="vitrine">
+      <div id="stage" class="stage">
+        <canvas id="cv" role="img" aria-label="Diorama"></canvas>
+        <div class="tools">
+          <button id="bPause" type="button" aria-pressed="false">Pause</button>
+          <button id="bView" type="button" aria-pressed="false">Show the electrons</button>
+        </div>
+      </div>
+    </div>
+    <p class="plaque" id="plaque">The pasture</p>
+  </section>
+  <section class="card levers" aria-label="Levers and tallies">
+    <div><h3>Levers</h3><div id="ctls"></div></div>
+    <div><h3>Tallies</h3><dl class="ro" id="ro"></dl></div>
+    <div class="logwrap" id="logwrap" hidden>
+      <h3>The logbook</h3>
+      <canvas id="logcv" role="img" aria-label="Logbook chart of flow against the dog's vigour"></canvas>
+      <ul class="legend" id="legend"></ul>
+    </div>
+  </section>
+  <article class="placard" aria-labelledby="plK">
+    <p class="pl-k" id="plK">From the essay</p>
+    <p class="essay" id="essay"></p>
+    <h3>Directions to the visitor</h3>
+    <p class="dirs" id="dirs"></p>
+    <aside class="margin" aria-label="Marginal note"><h3>Marginal note</h3><p id="note"></p></aside>
+  </article>
+  <nav class="doors" aria-label="Previous and next room">
+    <button class="door prev" id="dPrev" type="button"><small>Back to</small><span id="dPrevT"></span></button>
+    <button class="door next" id="dNext" type="button"><small>Proceed to</small><span id="dNextT"></span></button>
+  </nav>
+</main>
+
+<footer>
+  <p>Made by AirplaneBug using Claude &middot; <a href="https://airplanebug.io" target="_blank" rel="noopener noreferrer">airplanebug.io</a> &middot; GitHub <a href="https://github.com/airplanebug" target="_blank" rel="noopener noreferrer">airplanebug</a> &middot; AGPL v3</p>
+  <p>Nothing on this page loads from the network. The sheep, the dog, and the pasture are drawn by the page itself.</p>
+  <p class="disc">Facts and figures in the marginal notes have been assembled by Claude and are not yet human-verified. Use them at your own discretion.</p>
+</footer>
+</div>
+<div id="sr" class="vh" role="status" aria-live="polite" aria-atomic="true"></div>
+<noscript><p style="padding:1rem">This museum needs JavaScript to draw its dioramas. The essay itself is readable without it in the source of this page.</p></noscript>
+
+<script>
+(function(){
+"use strict";
+var $=function(i){return document.getElementById(i);};
+var rnd=Math.random,min=Math.min,max=Math.max,abs=Math.abs,sqrt=Math.sqrt,PI=Math.PI,TAU=2*PI,cos=Math.cos,sin=Math.sin,exp=Math.exp,round=Math.round,floor=Math.floor;
+function cl(x,a,b){return x<a?a:(x>b?b:x);}
+function lsGet(k,d){try{var v=localStorage.getItem("shd."+k);return v===null?d:v;}catch(e){return d;}}
+function lsSet(k,v){try{localStorage.setItem("shd."+k,v);}catch(e){}}
+function lsDel(k){try{localStorage.removeItem("shd."+k);}catch(e){}}
+function seeded(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+/* ================= the model: a Drude gas of sheep ================= */
+var NFULL=72,NLITE=36,VTH=0.16,NU0=0.5,AUNIT=0.012,SR=0.018,KOBS=18,PHYS=0.55,SRP=0.6*0.018,YMIN=0.05,YMAX=0.95,GATE=0.92,HEATK=40;
+var PREF=0.0055; /* heat per sheep per second that makes the lamp burn at about full */
+var sheep=[],obs=[],POOL=[];
+var sim={dog:false,V:0,R:1,temp:1,front:9,showField:false,heatOn:true};
+var M={vx:0,I:0,bumps:0,P:0,out:0,inn:0,lamp:0};
+var acc={bumps:0,heat:0,t:0};
+var simT=0,tauV=5;
+
+function makePool(){var r=seeded(1847),tries=0,p=[];
+  while(p.length<110&&tries<20000){tries++;var x=0.07+0.86*r(),y=0.1+0.8*r(),type=(p.length%7===3)?2:(p.length%3===1?1:0),rad=type===2?0.036:(0.021+0.01*r()),ok=true;
+    for(var i=0;i<p.length;i++){var dx=p[i].x-x,dy=p[i].y-y,m=p[i].r+rad+0.03;if(dx*dx+dy*dy<m*m){ok=false;break;}}
+    if(ok)p.push({x:x,y:y,r:rad,type:type,heat:0,shake:0,seed:r()*TAU});}
+  POOL=p;}
+function randomize(s){var a=rnd()*TAU,sp=VTH*sim.temp*(0.75+0.5*rnd());s.v0=sp;s.vx=sp*cos(a);s.vy=sp*sin(a);}
+function makeFlock(n){var r=seeded(99),i;sheep=[];for(i=0;i<n;i++){var s={x:r(),y:YMIN+(YMAX-YMIN)*r(),vx:0,vy:0,v0:VTH,ph:r()*4,face:r()<0.5?1:-1,px:0};randomize(s);s.px=s.x;sheep.push(s);}pushOut();}
+function pushOut(){var i,j,s,o;for(i=0;i<sheep.length;i++){s=sheep[i];for(j=0;j<obs.length;j++){o=obs[j];var dx=s.x-o.x,dy=s.y-o.y,rr=o.r*PHYS+SRP,d2=dx*dx+dy*dy;if(d2<rr*rr){var d=sqrt(d2)||1e-6;s.x=o.x+dx/d*rr;s.y=o.y+dy/d*rr;}}}}
+function setR(R){sim.R=R;var k=cl(round((R-1)*KOBS),0,POOL.length);obs=POOL.slice(0,k);pushOut();}
+function setTemp(t){var f=t/sim.temp;sim.temp=t;for(var i=0;i<sheep.length;i++){var s=sheep[i];s.vx*=f;s.vy*=f;s.v0*=f;}}
+
+function step(dt){
+  var a=sim.dog?AUNIT*sim.V:0,whim=NU0*dt,cap=4*VTH*sim.temp,i,j,s,o,sum=0,n=sheep.length,no=obs.length;
+  for(i=0;i<n;i++){s=sheep[i];
+    if(a&&s.x<sim.front)s.vx+=a*dt;
+    s.x+=s.vx*dt;s.y+=s.vy*dt;
+    if(rnd()<whim){var e0=0.5*(s.vx*s.vx+s.vy*s.vy-s.v0*s.v0);if(e0>0)acc.heat+=e0;randomize(s);acc.bumps++;}
+    for(j=0;j<no;j++){o=obs[j];var dx=s.x-o.x;if(dx>0.07||dx<-0.07)continue;var dy=s.y-o.y,rr=o.r*PHYS+SRP,d2=dx*dx+dy*dy;
+      if(d2<rr*rr){var d=sqrt(d2)||1e-6,nx=dx/d,ny=dy/d;s.x=o.x+nx*rr;s.y=o.y+ny*rr;
+        var e=0.5*(s.vx*s.vx+s.vy*s.vy-s.v0*s.v0);if(e>0){acc.heat+=e;o.heat=min(1.6,o.heat+e*HEATK);}
+        randomize(s);var dot=s.vx*nx+s.vy*ny;if(dot<0){s.vx-=2*dot*nx;s.vy-=2*dot*ny;}
+        o.shake=1;acc.bumps++;break;}}
+    if(s.y<YMIN){s.y=YMIN;s.vy=abs(s.vy);}else if(s.y>YMAX){s.y=YMAX;s.vy=-abs(s.vy);}
+    var sp2=s.vx*s.vx+s.vy*s.vy;if(sp2>cap*cap){var f=cap/sqrt(sp2);s.vx*=f;s.vy*=f;}
+    if(s.px<GATE&&s.x>=GATE)M.out++;else if(s.px>=GATE&&s.x<GATE)M.inn++;
+    if(s.x>=1)s.x-=1;else if(s.x<0)s.x+=1;s.px=s.x;
+    s.ph+=dt*sqrt(sp2)*38;
+    if(s.vx>0.03)s.face=1;else if(s.vx<-0.03)s.face=-1;
+    sum+=s.vx;}
+  for(j=0;j<no;j++){o=obs[j];o.heat*=exp(-dt*0.9);o.shake*=exp(-dt*7);}
+  acc.t+=dt;simT+=dt;
+  var k=1-exp(-dt/tauV);M.vx+=(sum/max(1,n)-M.vx)*k;
+  return sum/max(1,n);}
+function measure(dt){ /* bump rate and heat, smoothed */
+  if(acc.t<0.25)return;var n=max(1,sheep.length),k=1-exp(-acc.t/2.5);
+  M.bumps+=(acc.bumps/n/acc.t-M.bumps)*k;M.P+=(acc.heat/n/acc.t-M.P)*k;acc.bumps=0;acc.heat=0;acc.t=0;}
+
+/* ================= the eight rooms ================= */
+var ROOMS=[
+{id:"room-1",n:"I",tab:"The Comparison",title:"The Homely Comparison",plaque:"A broad pasture, with its flock",
+ text:"It has long been the custom of those who would expound the principles of electrical science to a general audience to seek some homely comparison by which the invisible may be rendered familiar. Of the many such figures that have been proposed, few are so serviceable as that of the sheepdog and his flock, and it is the purpose of the following remarks to set forth, with such precision as the comparison permits, the manner in which an electric field gives rise to that orderly movement of charge which we call an electric current.",
+ dirs:"Before you lies the pasture of the comparison, with its flock at grazing and no dog in sight. The museum is laid out in eight rooms, to be visited in order, and each sets one paragraph of the essay beside a working model of what it describes. The levers beneath each case let you try the matter for yourself. When you have looked your fill, proceed through the door at the foot of the room.",
+ note:"The free electron was identified by J. J. Thomson at the Cavendish Laboratory in 1897. The picture this museum follows, of electrons as a restless gas jostling through a metal, was put forward by Paul Drude in 1900, and the sheep below obey his rules.",
+ aria:"A cartoon pasture, long and fenced, with a flock of sheep wandering about at random among a few stones and tussocks. A kennel stands empty at the left end.",
+ p:{dog:false,V:0,R:1.8,temp:1},lamp:false,ctl:[],
+ rows:[["Sheep in the pasture",function(){return ""+sheep.length;}],["Stones, tussocks, and thickets",function(){return ""+obs.length;}],["Passed the far gate, less those returned",function(){return sgn(M.out-M.inn);}]]},
+
+{id:"room-2",n:"II",tab:"The Flock at Liberty",title:"The Flock at Liberty",plaque:"Motion in abundance, but no current",
+ text:"Let the reader first picture to himself a broad pasture, enclosed and somewhat elongated in form, upon which a great multitude of sheep are at liberty. These sheep represent the free electrons of a metallic conductor, which, as the researches of Sir J. J. Thomson and his successors have made plain, are not bound to any particular atom but wander more or less at will throughout the body of the metal. It is a fact of the first importance, and one too frequently overlooked, that these sheep are never wholly at rest. Each moves restlessly hither and thither, now grazing in one quarter, now trotting off to another, and the whole flock is in a state of perpetual and disorderly agitation. This agitation corresponds to the thermal motion of the electrons, which is in truth exceedingly rapid. Yet because each sheep is as likely to wander in one direction as in any other, the flock taken as a whole makes no progress toward either end of the pasture. There is motion in abundance, but there is no current.",
+ dirs:"Keep an eye on the tallies kept at the far gate. Sheep go out through it and come back in through it in very nearly equal numbers, so that the net passage hovers about nothing. Raise the agitation and every sheep goes faster, yet the flock still makes no progress. Tick the box to follow a single sheep and trace its wandering path.",
+ note:"In copper about one electron per atom is free, some 8.5 × 10<sup>28</sup> of them in each cubic metre. Their random speed is about 1,570 kilometres a second. Quantum theory (Sommerfeld, 1928) showed that most of this speed is not thermal at all: it persists even at the absolute zero, because no two electrons may share a state.",
+ aria:"The pasture with its flock running hither and thither. There is no dog. The sheep cross the far gate in both directions about equally.",
+ p:{dog:false,V:0,R:1,temp:1,follow:false},lamp:false,
+ ctl:[{t:"range",k:"temp",label:"Agitation of the flock (temperature)",min:0.4,max:1.8,step:0.05,fmt:function(v){return round(v*100)+" per cent";}},
+      {t:"check",k:"follow",label:"Follow one sheep and trace its path"}],
+ rows:[["Went out at the far gate",function(){return ""+M.out;}],["Came back in at it",function(){return ""+M.inn;}],["Net passage",function(){return sgn(M.out-M.inn);}],["Wandering speed",function(){return round(sim.temp*100)+" per cent of usual";}]]},
+
+{id:"room-3",n:"III",tab:"The Dog",title:"The Dog at the Near Gate",plaque:"Influence exerted at a distance: the field",
+ text:"Now let a sheepdog be introduced at one end of the field. The dog does not seize the sheep, nor does he drive them by actual contact; his influence is exerted at a distance, by his mere presence and disposition, and every sheep within the pasture is sensible of it. This influence is the electric field. Just as the sheep, perceiving the dog, are disposed to move away from him, so the electrons, being negatively charged, experience a force directing them away from the negative terminal of a battery and toward the positive. It should be observed in passing that the direction of the field is, by a convention established before the nature of the electron was understood, reckoned from positive to negative, so that the sheep move contrary to the direction in which the field is said to point. This circumstance has occasioned no small confusion among students, but it is purely a matter of nomenclature and in no way affects the physical truth.",
+ dirs:"Bring the dog, then send him away again. He touches no sheep, yet every sheep in the pasture is pressed upon at once. The upper arrow in the sky shows which way the sheep are pushed. The lower arrow, and the little brass arrows on the grass, show the field as convention draws it: from the positive end toward the negative, which is toward the dog, and so against the sheep.",
+ note:"Benjamin Franklin settled which kind of electricity to call positive in the 1740s, some hundred and fifty years before the electron was found to carry the other kind. Hence electrons move against the conventional field and against the conventional current, by an accident of naming.",
+ aria:"A black and white sheepdog crouches at the left end of the pasture. Faint rings spread from him across the grass. Brass arrows on the grass point toward the dog, and the sheep drift away from him toward the far gate at the right.",
+ p:{dog:true,V:4,R:1,temp:1,showField:true},lamp:false,
+ ctl:[{t:"btn",k:"dogBtn",label:function(P){return P.dog?"Send the dog away":"Bring the dog";},act:function(P){P.dog=!P.dog;}},
+      {t:"check",k:"showField",label:"Show the field as convention draws it"}],
+ rows:[["The dog",function(){return sim.dog?"crouched at the near gate":"sent away";}],["Push on the sheep",function(){return sim.dog?"toward the far gate (+)":"none";}],["Field, by convention",function(){return sim.dog?"toward the dog (-)":"none";}],["Sheep a minute through the far gate",function(){return perMin();}]]},
+
+{id:"room-4",n:"IV",tab:"The Drift",title:"The Slow Drift",plaque:"A slight and persistent tendency",
+ text:"The effect of the dog's influence upon the flock is subtle, and here the analogy repays close attention. The sheep do not abandon their disorderly wandering and march in ranks toward the far gate. On the contrary, each continues to dart about very much as before, but superimposed upon this random motion there is now a slight and persistent tendency in one direction. A given sheep may still turn back upon its course a dozen times, yet on the whole it gains a little ground away from the dog with each passing minute. This slow, collective progress is known to physicists as the drift of the electrons, and its velocity is astonishingly small, being in an ordinary copper wire carrying a moderate current of the order of a fraction of a millimetre per second. It is this drift, and not the far swifter random motion, that constitutes the electric current.",
+ dirs:"One sheep is ringed in brass and leaves a dotted track behind it. Watch it double back again and again, and yet creep, on the whole, toward the far gate. The arrow in the sky measures the drift of the whole flock. Change the dog's vigour and compare the drift with the wandering speed in the tallies.",
+ note:"A current of one ampere in copper wire one square millimetre in section drifts at about 0.07 mm a second (drift speed = I / nAe), against a random speed of some 1,570 km a second, a ratio of about 1 to 20,000 million. In this model the drift has been magnified some thousands of millions of times relative to the wandering, so that it can be seen at all.",
+ aria:"The dog crouches at the left. One sheep is ringed in brass and trails a dotted path that zigzags but creeps rightward. An arrow in the sky shows the average drift of the flock.",
+ p:{dog:true,V:3,R:1.6,temp:1,follow:true},lamp:false,
+ ctl:[{t:"range",k:"V",label:"Vigour of the dog (potential difference)",min:0,max:12,step:0.5,fmt:function(v){return v.toFixed(1)+" volts";}},
+      {t:"check",k:"follow",label:"Follow one sheep and trace its path"}],
+ rows:[["Wandering speed",function(){return "100 per cent";}],["Drift of the flock",function(){return pct(M.vx/(VTH*sim.temp))+" of it";}],["Time to cross the pasture by drift alone",function(){return M.vx>0.003?secs(1/M.vx):"never, at this rate";}],["Sheep a minute through the far gate",function(){return perMin();}]]},
+
+{id:"room-5",n:"V",tab:"Resistance and Heat",title:"Stones, Tussocks, and Thickets",plaque:"The origin of resistance, and of heat",
+ text:"The pasture, moreover, is not a smooth lawn. It is strewn with stones, tussocks, hedgerows, and thickets, against which the sheep continually blunder and by which their progress is checked. These obstructions represent the atoms of the metallic lattice, or more strictly the irregularities and thermal vibrations of that lattice, with which the electrons repeatedly collide. Each collision robs the sheep of the small advantage it had gained under the dog's urging, so that it must, as it were, begin again. Here we discover the origin of electrical resistance. In a pasture thickly obstructed, the dog may press as he will and yet relatively few sheep will pass the far gate in a given interval; in an open meadow, the same urging produces a far greater passage. And since every collision causes the obstacle itself to be shaken, the energy which the dog imparts to the flock is in the end communicated to the stones and hedges as a general agitation. This is the heat produced in every conductor through which a current flows, the same heat that renders incandescent the filament of an electric lamp.",
+ dirs:"Roughen the pasture with the lever. Every blunder shakes the obstacle and warms it, and the warmth is drawn as an orange glow that fades as it cools. The lamp beyond the far gate burns with the heat the flock delivers. Mark that a rougher pasture lets fewer sheep through the gate for the same urging, and that a fiercer dog makes more heat.",
+ note:"A perfect crystal would not obstruct the electrons at all, as Felix Bloch showed in 1929; resistance comes from the lattice's thermal vibrations and from impurities and defects. Copper at room temperature has a resistivity of about 1.7 × 10<sup>-8</sup> ohm-metres, and a lamp filament is simply a very rough pasture, made of tungsten, in which the heat is concentrated.",
+ aria:"The pasture is strewn with grey stones, green tussocks, and dark thickets. Sheep blunder into them; each struck obstacle shakes and glows orange. A lamp on a post beyond the far gate glows according to the heat delivered.",
+ p:{dog:true,V:6,R:3,temp:1},lamp:true,
+ ctl:[{t:"range",k:"R",label:"Roughness of the pasture (resistance)",min:1,max:5,step:0.1,fmt:function(v){return v.toFixed(1)+" ohms";}},
+      {t:"range",k:"V",label:"Vigour of the dog (potential difference)",min:0,max:12,step:0.5,fmt:function(v){return v.toFixed(1)+" volts";}}],
+ rows:[["Obstacles in the pasture",function(){return ""+obs.length;}],["Blunders per sheep each second",function(){return M.bumps.toFixed(2);}],["Heat delivered",function(){return round(M.P/PREF*100)+" units";}],["The lamp",function(){return lampWord();}],["Sheep a minute through the far gate",function(){return perMin();}]]},
+
+{id:"room-6",n:"VI",tab:"Ohm's Law",title:"The Law of Ohm",plaque:"Flow proportional to pressure, inversely to roughness",
+ text:"From these considerations the reader will at once perceive the substance of the law enunciated by Georg Simon Ohm. The more vigorously the dog asserts himself, which is to say the greater the electrical pressure or potential difference, the greater the number of sheep passing a given gate in each minute, which is to say the greater the current. The rougher the pasture, the smaller the current for a given urging. The current is thus proportional to the pressure and inversely proportional to the resistance, a relation which experiment confirms with remarkable fidelity in metallic conductors at constant temperature.",
+ dirs:"Here is a working test of the law. Set the dog's vigour and the roughness of the pasture, then leave the levers alone for about a dozen seconds while the keeper counts; the reading is then entered in the logbook. Take several readings at one roughness and they fall on a straight line through the origin. A rougher pasture gives a shallower line. The resistance is read from the slope of each line.",
+ note:"Ohm published the law in <i>Die galvanische Kette, mathematisch bearbeitet</i> (Berlin, 1827). The ohms of this museum are a scale of roughness, calibrated so that the bare pasture reads 1. The counted values wander a little from reading to reading, as any tally of a restless flock will.",
+ aria:"The dog presses the flock through a strewn pasture. Beneath the case, a logbook chart plots sheep per minute against the dog's vigour; readings at one roughness fall on a straight line.",
+ p:{dog:true,V:6,R:2.5,temp:1},lamp:true,log:true,
+ ctl:[{t:"range",k:"V",label:"Vigour of the dog (V)",min:0,max:12,step:0.5,fmt:function(v){return v.toFixed(1)+" volts";}},
+      {t:"range",k:"R",label:"Roughness of the pasture (R)",min:1,max:5,step:0.5,fmt:function(v){return v.toFixed(1)+" ohms";}},
+      {t:"btn",k:"clr",label:function(){return "Clear the logbook";},act:function(){LOG.length=0;meas.key="";drawLog();}}],
+ rows:[["Flow through the gate (I)",function(){return perMin();}],["Vigour divided by flow (R)",function(){return rMeas();}],["The keeper",function(){return meas.state;}],["Readings in the logbook",function(){return ""+LOG.length;}]]},
+
+{id:"room-7",n:"VII",tab:"The Field Everywhere",title:"The Dog Who Is Everywhere at Once",plaque:"The energy goes by the field, not by the sheep",
+ text:"It remains to correct one impression which the analogy, if pressed too far, might convey. A single dog standing at one end of a long pasture could make his presence felt only gradually, the nearer sheep stirring first and the more distant ones only afterward. The electric field, however, is established along the whole length of a conductor with a rapidity approaching that of light itself. We ought therefore to imagine not a solitary dog but, as it were, a dog whose influence pervades every part of the pasture almost at the instant the gate is opened, so that sheep at the remote end begin their drift virtually at the same moment as those nearest the battery. It is for this reason that an electric lamp is illuminated the moment its switch is closed, although no individual electron could traverse the length of the wire in less than many hours. The energy, it must be emphasized, is conveyed by the field, as the illustrious Poynting demonstrated, and not carried bodily by the sheep from one end of the field to the other.",
+ dirs:"The gate is shut and the dog asleep. Choose how his influence travels, then open the gate. With a single dog the stir spreads slowly down the pasture, the brass band marks how far it has got, and the lamp waits. With his influence everywhere at once, as with a true field, the lamp lights at the instant, though no sheep has gone anywhere. The golden glints running along the far fence stand for the energy, which travels outside the flock.",
+ note:"A signal runs along a cable at a large fraction of the speed of light, commonly between 60 and 90 per cent of it, depending on the insulation. At 0.07 mm a second an electron needs nearly four hours to go one metre. J. H. Poynting showed in 1884 that the energy flows through the field in the space around the wire and enters it from the side.",
+ aria:"The dog lies asleep at a shut gate. When the gate is opened, his influence either creeps down the pasture as a brass band, or fills it at once; golden glints run along the far fence to the lamp, which lights when they arrive.",
+ p:{dog:true,V:6,R:2,temp:1,mode:0,open:false},lamp:true,
+ ctl:[{t:"seg",k:"mode",label:"How the dog's influence travels",opts:["A single dog at one end","His influence everywhere at once"],act:function(P){P.open=false;}},
+      {t:"btn",k:"openBtn",label:function(P){return P.open?"Shut the gate again":"Open the gate (close the switch)";},act:function(P){P.open=!P.open;}}],
+ rows:[["The gate",function(){return R7.open?"open":"shut";}],["The dog's influence has reached",function(){return R7.open?pct(min(1,sim.front))+" of the way":"nowhere yet";}],["The lamp lit after",function(){return R7.lit>=0?R7.lit.toFixed(1)+" seconds":(R7.open?"still waiting":"not yet lit");}],["One sheep, gate to gate, by drift alone",function(){return M.vx>0.003?secs(1/M.vx):"no drift yet";}]]},
+
+{id:"room-8",n:"VIII",tab:"The Ladder",title:"The Ladder Set Aside",plaque:"Everything at once, and then the real thing",
+ text:"With these qualifications duly observed, the figure of the sheepdog and his flock will be found to illuminate the essential features of the phenomenon: the ceaseless disorderly motion of the free electrons, the gentle but universal influence of the field, the slow and collective drift which constitutes the current, and the obstructions which give rise to resistance and to heat. No analogy can be wholly faithful to the processes of Nature, and the prudent student will employ this one as a ladder to be climbed and afterward set aside, but as an introduction to the subject it has few equals.",
+ dirs:"Every feature of the comparison is in play together here. When you have done with it, set the ladder aside: the sheep become free electrons, the stones and thickets the irregularities of the copper lattice, the dog the negative terminal, and the far gate the positive. The regular rows of faint dots are the lattice itself, which by itself obstructs nothing. The same view is offered in every room by the button on the case.",
+ note:"The sheep model is Drude's model of 1900 in wool. Quantum theory corrects it in detail (the wandering speed, the true cause of the blunders, and why only some electrons take part) but keeps its shape, and the drift, the collisions, and Ohm's proportion all survive.",
+ aria:"The full model: dog, flock, obstacles, lamp, and a wooden ladder leaning on the far fence. Setting the ladder aside turns the picture into electrons drifting through a copper lattice.",
+ p:{dog:true,V:6,R:2.5,temp:1,follow:false},lamp:true,ladder:true,
+ ctl:[{t:"btn",k:"ladBtn",label:function(){return VIEW?"Take up the ladder again (show the sheep)":"Set the ladder aside (show the electrons)";},act:function(){setView(VIEW?0:1);}},
+      {t:"range",k:"V",label:"Vigour of the dog (potential difference)",min:0,max:12,step:0.5,fmt:function(v){return v.toFixed(1)+" volts";}},
+      {t:"range",k:"R",label:"Roughness of the pasture (resistance)",min:1,max:5,step:0.1,fmt:function(v){return v.toFixed(1)+" ohms";}},
+      {t:"check",k:"follow",label:"Follow one sheep and trace its path"}],
+ rows:[["The picture",function(){return VIEW?"electrons in copper":"sheep in a pasture";}],["Flow through the gate (I)",function(){return perMin();}],["Vigour divided by flow (R)",function(){return rMeas();}],["The lamp",function(){return lampWord();}]]}
+];
+var R7={open:false,lit:-1,t:0};
+
+function sgn(n){return n>0?"+"+n:""+n;}
+function pct(f){return round(f*100)+" per cent";}
+function secs(s){return s>=120?(s/60).toFixed(1)+" minutes":round(s)+" seconds";}
+function perMin(){var I=sheep.length*M.vx*60;return (abs(I)<0.5?"0":round(I))+" a minute";}
+function rMeas(){if(!sim.dog||sim.V<1||M.vx<0.005)return "not yet measurable";return (AUNIT*sim.V/NU0/M.vx).toFixed(1)+" ohms";}
+function lampWord(){var L=M.lamp;return L<0.06?"dark":L<0.35?"a dull red glow":L<0.75?"glowing":"burning brightly";}
+
+/* ================= canvas and drawing ================= */
+var cv=$("cv"),ctx=cv.getContext("2d"),stage=$("stage");
+var W=320,H=200,DPR=1,gTop=80,gBot=180,farW=200,nearW=260,CX=160,SPX=20,FS=12;
+var BG=document.createElement("canvas"),FG=document.createElement("canvas");
+var LITE=false,AUTOLITE=false,CALM=true,LABELS=true,RMOT=false,VIEW=0,DUSK=false;
+var paused=false,dirty=true,bgDirty=true,visible=true,cur=0,ROOM=ROOMS[0];
+var PX=0,PY=0,PK=1,PW=1;
+function proj(x,y){var t=(y+0.06)/1.14;PY=gTop+(gBot-gTop)*t;PW=farW+(nearW-farW)*t;PX=CX+(x-0.5)*PW;PK=0.62+0.38*t;}
+
+var PALS={
+ day:{sky0:"#8ccbee",sky1:"#e3f3f6",sun:"#ffe48f",cloud:"#ffffff",hill3:"#a6cf86",hill2:"#86ba62",hill1:"#6ca64b",meadow:"#76b447",ground:"#82c24e",stripe:"#8fcd5a",
+  line:"#2b2a22",wood:"#a4713f",wood2:"#7b5232",wool:"#fbfaf3",face:"#3b3531",stone:"#aca89c",tuft:"#a9c44c",bush:"#3f7a34",berry:"#c3463a",flower:"#ffe27a",flower2:"#ffffff",lab:"#fffaf0",labsh:"#2b2a22",arrow:"#fff2c4"},
+ dusk:{sky0:"#101a36",sky1:"#3f4f7c",sun:"#f1ecd2",cloud:"#56658e",hill3:"#2f4c3b",hill2:"#27412f",hill1:"#203727",meadow:"#2a4f28",ground:"#2f5a2c",stripe:"#346230",
+  line:"#0c0e0b",wood:"#6e4c2d",wood2:"#4f361f",wool:"#dde2ea",face:"#2a2624",stone:"#7f7d75",tuft:"#6f8b37",bush:"#244e22",berry:"#9a3b33",flower:"#d6c36a",flower2:"#c8cbd6",lab:"#f4ecd3",labsh:"#0c0e0b",arrow:"#f1dfa0"}};
+function pal(){return DUSK?PALS.dusk:PALS.day;}
+function readTheme(){var t=document.documentElement.getAttribute("data-theme");
+  if(t==="dark")DUSK=true;else if(t==="light")DUSK=false;else{try{DUSK=window.matchMedia("(prefers-color-scheme: dark)").matches;}catch(e){DUSK=false;}}
+  buildSprites();bgDirty=true;dirty=true;if(ROOM&&ROOM.log)drawLog();}
+
+function mk(w,h){var c=document.createElement("canvas");c.width=max(1,Math.ceil(w));c.height=max(1,Math.ceil(h));return c;}
+function ell(g,x,y,rx,ry,rot){g.save();g.translate(x,y);if(rot)g.rotate(rot);g.scale(rx,ry);g.beginPath();g.arc(0,0,1,0,TAU);g.restore();}
+var SP={};
+function sheepSprite(s,frame,flip,p){
+  var cw=s*1.58,ch=s*1.22,c=mk(cw,ch),g=c.getContext("2d"),lw=max(1.2,s*0.055),i;
+  if(flip){g.translate(c.width,0);g.scale(-1,1);}
+  var bx=cw*0.43,by=ch*0.5;g.lineCap="round";g.lineJoin="round";
+  var Lx=[-0.27,-0.12,0.13,0.28],sw=frame?0.07:-0.07;
+  g.strokeStyle=p.face;g.lineWidth=s*0.09;
+  for(i=0;i<4;i++){var d=((i%2)?1:-1)*sw;g.beginPath();g.moveTo(bx+Lx[i]*s,by+0.06*s);g.lineTo(bx+(Lx[i]+d)*s,by+0.42*s);g.stroke();}
+  var P=[[-0.3,0.0,0.22],[-0.14,-0.14,0.24],[0.08,-0.17,0.24],[0.28,-0.06,0.21],[0.17,0.09,0.22],[-0.16,0.09,0.22],[-0.02,-0.02,0.25],[-0.42,-0.1,0.12]];
+  g.fillStyle=p.line;for(i=0;i<P.length;i++){g.beginPath();g.arc(bx+P[i][0]*s,by+P[i][1]*s,P[i][2]*s+lw,0,TAU);g.fill();}
+  g.fillStyle=p.wool;for(i=0;i<P.length;i++){g.beginPath();g.arc(bx+P[i][0]*s,by+P[i][1]*s,P[i][2]*s,0,TAU);g.fill();}
+  g.fillStyle="rgba(255,255,255,.7)";for(i=1;i<4;i++){g.beginPath();g.arc(bx+(P[i][0]-0.06)*s,by+(P[i][1]-0.1)*s,P[i][2]*s*0.32,0,TAU);g.fill();}
+  g.fillStyle="rgba(120,110,90,.16)";ell(g,bx,by+0.13*s,0.38*s,0.09*s,0);g.fill();
+  var hx=bx+0.47*s,hy=by-0.06*s;
+  g.fillStyle=p.line;ell(g,hx-0.08*s,hy-0.12*s,0.13*s+lw,0.055*s+lw,-0.6);g.fill();g.fillStyle=p.face;ell(g,hx-0.08*s,hy-0.12*s,0.13*s,0.055*s,-0.6);g.fill();
+  g.fillStyle=p.line;ell(g,hx,hy,0.15*s+lw,0.19*s+lw,0.35);g.fill();g.fillStyle=p.face;ell(g,hx,hy,0.15*s,0.19*s,0.35);g.fill();
+  g.fillStyle=p.line;g.beginPath();g.arc(hx-0.04*s,hy-0.17*s,0.085*s+lw,0,TAU);g.fill();g.fillStyle=p.wool;g.beginPath();g.arc(hx-0.04*s,hy-0.17*s,0.085*s,0,TAU);g.fill();
+  g.fillStyle="#ffffff";g.beginPath();g.arc(hx+0.05*s,hy-0.04*s,0.052*s,0,TAU);g.fill();g.fillStyle="#1a1714";g.beginPath();g.arc(hx+0.065*s,hy-0.035*s,0.027*s,0,TAU);g.fill();
+  return {c:c,ax:flip?1-0.43:0.43,ay:(by+0.44*s)/ch};}
+function obsSprite(type,u,p){var c,g,lw=max(1.2,u*0.06),i;
+  if(type===0){c=mk(u*1.2,u*0.9);g=c.getContext("2d");var x=u*0.6,y=u*0.55;
+    g.fillStyle=p.line;ell(g,x,y,u*0.5+lw,u*0.3+lw,0);g.fill();g.fillStyle=p.stone;ell(g,x,y,u*0.5,u*0.3,0);g.fill();
+    g.fillStyle="rgba(255,255,255,.35)";ell(g,x-u*0.15,y-u*0.12,u*0.18,u*0.08,-0.2);g.fill();g.fillStyle="rgba(0,0,0,.14)";ell(g,x+u*0.08,y+u*0.12,u*0.32,u*0.1,0);g.fill();
+    return {c:c,ax:0.5,ay:0.84};}
+  if(type===1){c=mk(u*1.2,u*1.0);g=c.getContext("2d");var bx=u*0.6,by=u*0.86;g.lineJoin="round";
+    g.beginPath();g.moveTo(bx-u*0.42,by);for(i=0;i<=8;i++){var a=PI+i*PI/8,r=(i%2)?u*0.38:u*0.72;g.lineTo(bx+cos(a)*r*0.75,by+sin(a)*r*0.95);}g.lineTo(bx+u*0.42,by);g.closePath();
+    g.fillStyle=p.tuft;g.fill();g.strokeStyle=p.line;g.lineWidth=lw;g.stroke();return {c:c,ax:0.5,ay:0.86};}
+  c=mk(u*1.4,u*1.25);g=c.getContext("2d");var B=[[0.4,0.72,0.3],[0.72,0.62,0.34],[1.0,0.74,0.28],[0.68,0.88,0.3]];
+  g.fillStyle=p.line;for(i=0;i<4;i++){g.beginPath();g.arc(B[i][0]*u,B[i][1]*u,B[i][2]*u+lw,0,TAU);g.fill();}
+  g.fillStyle=p.bush;for(i=0;i<4;i++){g.beginPath();g.arc(B[i][0]*u,B[i][1]*u,B[i][2]*u,0,TAU);g.fill();}
+  g.fillStyle="rgba(255,255,255,.14)";g.beginPath();g.arc(0.62*u,0.48*u,0.14*u,0,TAU);g.fill();
+  g.fillStyle=p.berry;[[0.52,0.66],[0.84,0.6],[0.98,0.8],[0.66,0.84]].forEach(function(q){g.beginPath();g.arc(q[0]*u,q[1]*u,u*0.04,0,TAU);g.fill();});
+  return {c:c,ax:0.5,ay:0.92};}
+function glow(rgb,sz){var c=mk(sz,sz),g=c.getContext("2d"),gr=g.createRadialGradient(sz/2,sz/2,0,sz/2,sz/2,sz/2);
+  gr.addColorStop(0,"rgba("+rgb+",0.95)");gr.addColorStop(0.45,"rgba("+rgb+",0.35)");gr.addColorStop(1,"rgba("+rgb+",0)");g.fillStyle=gr;g.fillRect(0,0,sz,sz);return c;}
+function ball(rgb,sz){var c=mk(sz,sz),g=c.getContext("2d"),lt=rgb.map(function(v){return min(255,v+110);}),dk=rgb.map(function(v){return (v*0.35)|0;}),gr=g.createRadialGradient(sz*0.36,sz*0.32,sz*0.04,sz/2,sz/2,sz/2);
+  gr.addColorStop(0,"rgb("+lt+")");gr.addColorStop(0.5,"rgb("+rgb+")");gr.addColorStop(1,"rgb("+dk+")");g.fillStyle=gr;g.beginPath();g.arc(sz/2,sz/2,sz/2-1,0,TAU);g.fill();return c;}
+function buildSprites(){var p=pal(),s=SPX*DPR;
+  SP.sheep=[sheepSprite(s,0,false,p),sheepSprite(s,1,false,p),sheepSprite(s,0,true,p),sheepSprite(s,1,true,p)];
+  SP.obs=[obsSprite(0,s,p),obsSprite(1,s,p),obsSprite(2,s,p)];
+  var sh=mk(s,s*0.32),g=sh.getContext("2d");g.fillStyle="rgba(20,30,10,.24)";ell(g,s/2,s*0.16,s*0.48,s*0.14,0);g.fill();SP.shadow=sh;
+  SP.warm=glow("255,130,40",64);SP.gold=glow("255,214,110",64);SP.lampg=glow("255,226,140",96);
+  SP.elec=ball([255,205,70],32);SP.ion=ball([214,120,64],40);}
+
+function layout(){W=max(80,stage.clientWidth);H=max(80,stage.clientHeight);
+  DPR=min(window.devicePixelRatio||1,(LITE||AUTOLITE)?1:1.5);cv.width=round(W*DPR);cv.height=round(H*DPR);
+  var portrait=H>W*0.8;gTop=H*(portrait?0.36:0.40);gBot=H*0.93;farW=W*0.62;nearW=W*0.8;CX=W/2;
+  SPX=cl(min(W/17,(gBot-gTop)/4),8,54);FS=cl(W/52,10,15);
+  buildSprites();bgDirty=true;dirty=true;}
+
+function hillPath(g,base,amp,f,ph){g.beginPath();g.moveTo(0,gTop+2);var n=36,i;for(i=0;i<=n;i++){var x=W*i/n,u=i/n;g.lineTo(x,base-amp*(0.6*sin(u*f*TAU+ph)+0.4*sin(u*f*2.3*TAU+ph*1.7)+0.6));}g.lineTo(W,gTop+2);g.closePath();}
+function hillLine(g,base,amp,f,ph){g.beginPath();var n=36,i;for(i=0;i<=n;i++){var x=W*i/n,u=i/n,y=base-amp*(0.6*sin(u*f*TAU+ph)+0.4*sin(u*f*2.3*TAU+ph*1.7)+0.6);if(i)g.lineTo(x,y);else g.moveTo(x,y);}}
+function cloud(g,x,y,r,p,lw){var C=[[0,0,1],[-0.9,0.25,0.7],[0.95,0.2,0.75],[0.4,-0.45,0.7],[-0.45,-0.35,0.62]],i;
+  g.fillStyle=p.line;for(i=0;i<5;i++){g.beginPath();g.arc(x+C[i][0]*r,y+C[i][1]*r,C[i][2]*r+lw,0,TAU);g.fill();}
+  g.fillStyle=p.cloud;for(i=0;i<5;i++){g.beginPath();g.arc(x+C[i][0]*r,y+C[i][1]*r,C[i][2]*r,0,TAU);g.fill();}}
+function quadW(g,x0,y0,x1,y1){proj(x0,y0);g.moveTo(PX,PY);proj(x1,y0);g.lineTo(PX,PY);proj(x1,y1);g.lineTo(PX,PY);proj(x0,y1);g.lineTo(PX,PY);g.closePath();}
+function post(g,x,y,h,p,lw,cap){proj(x,y);var w=max(2,SPX*0.13*PK),hh=h*PK;g.fillStyle=p.line;g.fillRect(PX-w/2-lw/2,PY-hh-lw/2,w+lw,hh+lw);g.fillStyle=p.wood;g.fillRect(PX-w/2,PY-hh,w,hh);
+  if(cap){g.fillStyle="#d8b464";g.beginPath();g.arc(PX,PY-hh,w*0.85,0,TAU);g.fill();g.strokeStyle=p.line;g.lineWidth=lw*0.7;g.stroke();}}
+function rail(g,y,x0,x1,h,p,lw){proj(x0,y);var ax=PX,ay=PY-h*PK;proj(x1,y);var bx=PX,by=PY-h*PK;var t=max(2,SPX*0.09*PK);
+  g.strokeStyle=p.line;g.lineWidth=t+lw;g.beginPath();g.moveTo(ax,ay);g.lineTo(bx,by);g.stroke();g.strokeStyle=p.wood2;g.lineWidth=t;g.beginPath();g.moveTo(ax,ay);g.lineTo(bx,by);g.stroke();}
+function fence(g,y,p,lw,front){var h=SPX*0.85,i;
+  for(i=0;i<=10;i++)post(g,i/10,y,(i===0||i===10)?h*1.35:h,p,lw,i===0||i===10);
+  rail(g,y,0,1,h*0.78,p,lw);rail(g,y,0,1,h*0.4,p,lw);}
+function paintBG(){bgDirty=false;var p=pal(),lw=max(1.3,W/330),i,g;
+  BG.width=cv.width;BG.height=cv.height;g=BG.getContext("2d");g.setTransform(DPR,0,0,DPR,0,0);g.lineJoin="round";g.lineCap="round";
+  FG.width=cv.width;FG.height=cv.height;var f=FG.getContext("2d");f.setTransform(DPR,0,0,DPR,0,0);f.lineJoin="round";f.lineCap="round";
+  if(VIEW){paintLattice(g,f,p,lw);return;}
+  var gr=g.createLinearGradient(0,0,0,gTop);gr.addColorStop(0,p.sky0);gr.addColorStop(1,p.sky1);g.fillStyle=gr;g.fillRect(0,0,W,gTop+2);
+  var rs=seeded(5);
+  if(DUSK){g.fillStyle="#f4efdc";for(i=0;i<40;i++){var sx=rs()*W,sy=rs()*gTop*0.8;g.globalAlpha=0.3+0.6*rs();g.fillRect(sx,sy,1.4,1.4);}g.globalAlpha=1;
+    var mr=gTop*0.13;g.fillStyle=p.sun;g.beginPath();g.arc(W*0.82,gTop*0.3,mr,0,TAU);g.fill();g.fillStyle=p.sky0;g.beginPath();g.arc(W*0.82+mr*0.45,gTop*0.3-mr*0.2,mr*0.85,0,TAU);g.fill();}
+  else{var sr=gTop*0.15;g.fillStyle="rgba(255,240,170,.35)";g.beginPath();g.arc(W*0.82,gTop*0.32,sr*1.7,0,TAU);g.fill();g.fillStyle=p.sun;g.beginPath();g.arc(W*0.82,gTop*0.32,sr,0,TAU);g.fill();g.strokeStyle=p.line;g.lineWidth=lw;g.stroke();}
+  cloud(g,W*0.16,gTop*0.36,gTop*0.11,p,lw);cloud(g,W*0.5,gTop*0.2,gTop*0.08,p,lw);if(W>360)cloud(g,W*0.66,gTop*0.48,gTop*0.07,p,lw);
+  var hs=[[gTop-H*0.02,H*0.08,1.3,0.7,p.hill3],[gTop+H*0.005,H*0.06,1.8,2.1,p.hill2],[gTop+H*0.02,H*0.045,2.4,4.2,p.hill1]];
+  for(i=0;i<3;i++){g.fillStyle=hs[i][4];hillPath(g,hs[i][0],hs[i][1],hs[i][2],hs[i][3]);g.fill();g.strokeStyle=p.line;g.lineWidth=lw;hillLine(g,hs[i][0],hs[i][1],hs[i][2],hs[i][3]);g.stroke();}
+  g.fillStyle=p.meadow;g.fillRect(0,gTop,W,H-gTop);g.strokeStyle=p.line;g.lineWidth=lw;g.beginPath();g.moveTo(0,gTop);g.lineTo(W,gTop);g.stroke();
+  for(i=0;i<10;i++){g.beginPath();quadW(g,i/10,-0.02,(i+1)/10,1.03);g.fillStyle=(i%2)?p.stripe:p.ground;g.fill();}
+  g.beginPath();quadW(g,0,-0.02,1,1.03);g.strokeStyle="rgba(0,0,0,.18)";g.lineWidth=lw;g.stroke();
+  for(i=0;i<70;i++){var fx=rs()*1.3-0.15,fy=rs()*1.1-0.03;proj(fx,fy);if(PY>H-2)continue;g.fillStyle=rs()<0.5?p.flower:p.flower2;g.beginPath();g.arc(PX,PY,max(1,SPX*0.05*PK),0,TAU);g.fill();}
+  /* kennel at the dog's end */
+  proj(-0.1,0.12);var kx=PX,ky=PY,kw=SPX*1.3*PK,kh=SPX*0.95*PK;
+  g.fillStyle=p.line;g.fillRect(kx-kw/2-lw,ky-kh-lw,kw+2*lw,kh+lw);g.fillStyle=p.wood;g.fillRect(kx-kw/2,ky-kh,kw,kh);
+  g.beginPath();g.moveTo(kx-kw*0.62,ky-kh+1);g.lineTo(kx,ky-kh*1.62);g.lineTo(kx+kw*0.62,ky-kh+1);g.closePath();g.fillStyle="#9a3b2a";g.fill();g.strokeStyle=p.line;g.lineWidth=lw;g.stroke();
+  g.fillStyle="#1d1712";g.beginPath();g.moveTo(kx-kw*0.2,ky);g.lineTo(kx-kw*0.2,ky-kh*0.5);g.arc(kx,ky-kh*0.5,kw*0.2,PI,0);g.lineTo(kx+kw*0.2,ky);g.closePath();g.fill();
+  fence(g,-0.03,p,lw,false);
+  /* lamp post beyond the far gate */
+  if(ROOM.lamp){proj(1.08,0.2);var lx=PX,ly=PY,lh=SPX*2.9*PK;LAMP.x=lx;LAMP.y=ly-lh;LAMP.r=SPX*0.26*PK;
+    g.fillStyle=p.line;g.fillRect(lx-SPX*0.08*PK-lw/2,ly-lh,SPX*0.16*PK+lw,lh);g.fillStyle="#3b4a3a";g.fillRect(lx-SPX*0.08*PK,ly-lh,SPX*0.16*PK,lh);
+    g.fillStyle=p.line;g.beginPath();g.arc(lx,ly-lh-LAMP.r*0.9,LAMP.r*0.7,PI,0);g.fill();}
+  /* near fence goes to the foreground layer */
+  fence(f,1.04,p,lw,true);
+  for(i=0;i<16;i++){var tx=rs()*W,ty=H-rs()*H*0.04;f.fillStyle=p.hill1;f.beginPath();f.moveTo(tx-6,H);f.lineTo(tx-2,ty-6);f.lineTo(tx,H);f.lineTo(tx+3,ty-9);f.lineTo(tx+6,H);f.closePath();f.fill();}
+}
+var LAMP={x:0,y:0,r:6};
+function paintLattice(g,f,p,lw){var gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,DUSK?"#0b1220":"#1d2a3c");gr.addColorStop(1,DUSK?"#131d2e":"#2a3b52");g.fillStyle=gr;g.fillRect(0,0,W,H);
+  g.beginPath();quadW(g,0,-0.03,1,1.04);g.fillStyle=DUSK?"rgba(214,120,64,.07)":"rgba(214,120,64,.10)";g.fill();g.strokeStyle="#d6874a";g.lineWidth=max(1.5,lw*1.4);g.stroke();
+  var i,j;for(j=0;j<=7;j++)for(i=0;i<=22;i++){proj(i/22,-0.02+j*1.05/7);g.fillStyle="rgba(214,135,74,.38)";g.beginPath();g.arc(PX,PY,max(1,SPX*0.07*PK),0,TAU);g.fill();}
+  g.fillStyle="#f2e8cc";g.font="600 "+FS+"px "+labelFont();g.textAlign="left";g.fillText("Inside a copper wire, magnified beyond all reason",8,FS+6);
+  g.fillStyle="#b9c6d8";g.font="italic "+max(9,FS-2)+"px "+bodyFont();g.fillText("Faint dots: the regular lattice. Large spheres: its irregularities.",8,FS*2+10);
+  if(ROOM.lamp){proj(1.08,0.2);var lh=SPX*2.9*PK;LAMP.x=PX;LAMP.y=PY-lh;LAMP.r=SPX*0.26*PK;g.strokeStyle="#7b8aa3";g.lineWidth=max(2,SPX*0.12*PK);g.beginPath();g.moveTo(PX,PY);g.lineTo(PX,PY-lh);g.stroke();}}
+var FONTCACHE={};
+function cssVar(n,d){if(FONTCACHE[n])return FONTCACHE[n];try{var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();if(v){FONTCACHE[n]=v;return v;}}catch(e){}return d;}
+function labelFont(){return cssVar("--f-label","sans-serif");}
+function bodyFont(){return cssVar("--f-body","serif");}
+
+/* ---- per-frame drawing ---- */
+var ITEMS=[],TRAIL=[],trailT=0;
+function label(t,x,y,align,col){var p=pal();ctx.font="700 "+FS+"px "+labelFont();ctx.textAlign=align||"center";ctx.lineJoin="round";ctx.lineWidth=3;ctx.strokeStyle=VIEW?"#0b1220":p.labsh;ctx.strokeText(t,x,y);ctx.fillStyle=col||(VIEW?"#f2e8cc":p.lab);ctx.fillText(t,x,y);}
+function skyArrow(y,x0,x1,col,txt){var p=pal(),dir=x1>=x0?1:-1,hl=min(abs(x1-x0)*0.5,FS*0.9);
+  ctx.lineCap="round";ctx.lineJoin="round";
+  for(var pass=0;pass<2;pass++){ctx.strokeStyle=pass?col:(VIEW?"#0b1220":p.labsh);ctx.lineWidth=pass?max(2,FS*0.22):max(2,FS*0.22)+3;
+    ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.moveTo(x1,y);ctx.lineTo(x1-dir*hl,y-hl*0.55);ctx.moveTo(x1,y);ctx.lineTo(x1-dir*hl,y+hl*0.55);ctx.stroke();}
+  if(txt&&LABELS&&W>=240)label(txt,(x0+x1)/2,y-FS*0.55,"center",col);}
+function groundArrow(x,y,len){proj(x+len/2,y);var ax=PX,ay=PY,k=PK;proj(x-len/2,y);var bx=PX,by=PY,h=SPX*0.22*k;var p=pal();
+  for(var pass=0;pass<2;pass++){ctx.strokeStyle=pass?"#e9c76c":"rgba(30,25,10,.55)";ctx.lineWidth=pass?max(1.5,SPX*0.08*k):max(1.5,SPX*0.08*k)+2;
+    ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.moveTo(bx,by);ctx.lineTo(bx+h,by-h*0.55);ctx.moveTo(bx,by);ctx.lineTo(bx+h,by+h*0.55);ctx.stroke();}}
+function drawDog(x,y,s,vig,sleep,t){var p=pal(),lw=max(1.2,s*0.045);ctx.save();ctx.translate(x,y);ctx.lineCap="round";ctx.lineJoin="round";
+  ctx.drawImage(SP.shadow,-s*0.62,-s*0.1,s*1.24,s*0.26);
+  var cr=sleep?s*0.1:vig*0.07*s,blk="#1e1b1b",wht="#f3efe6";
+  var wag=sleep?0:sin(t*(5+vig*9))*0.5*min(1,0.25+vig);
+  ctx.strokeStyle=p.line;ctx.lineWidth=s*0.15;ctx.beginPath();ctx.moveTo(-s*0.42,-s*0.3+cr);ctx.quadraticCurveTo(-s*0.72,-s*0.34+cr-wag*s*0.1,-s*0.78,-s*(0.5+wag*0.25)+cr);ctx.stroke();
+  ctx.strokeStyle=blk;ctx.lineWidth=s*0.11;ctx.stroke();ctx.strokeStyle=wht;ctx.lineWidth=s*0.1;ctx.beginPath();ctx.moveTo(-s*0.76,-s*(0.46+wag*0.23)+cr);ctx.lineTo(-s*0.78,-s*(0.5+wag*0.25)+cr);ctx.stroke();
+  var legs=sleep?[]:[[-0.32],[-0.2],[0.22],[0.34]];
+  for(var i=0;i<legs.length;i++){ctx.strokeStyle=p.line;ctx.lineWidth=s*0.11;ctx.beginPath();ctx.moveTo(s*legs[i][0],-s*0.22+cr);ctx.lineTo(s*legs[i][0]+s*0.03,-s*0.02);ctx.stroke();ctx.strokeStyle=i%2?wht:blk;ctx.lineWidth=s*0.075;ctx.stroke();}
+  ctx.fillStyle=p.line;ell(ctx,-s*0.04,-s*0.3+cr,s*0.47+lw,s*0.19+lw,0);ctx.fill();ctx.fillStyle=blk;ell(ctx,-s*0.04,-s*0.3+cr,s*0.47,s*0.19,0);ctx.fill();
+  ctx.fillStyle=wht;ell(ctx,s*0.3,-s*0.26+cr,s*0.13,s*0.15,0);ctx.fill();ell(ctx,-s*0.05,-s*0.15+cr,s*0.22,s*0.05,0);ctx.fill();
+  var hx=s*0.48,hy=sleep?-s*0.2+cr*0.5:-s*0.46+cr*1.3;
+  var ear=sleep?0.9:(0.35-vig*0.25);
+  ctx.fillStyle=p.line;ctx.beginPath();ctx.moveTo(hx-s*0.13,hy-s*0.08);ctx.lineTo(hx-s*0.2,hy-s*(0.24+(sleep?-0.05:0.04)));ctx.lineTo(hx-s*0.02,hy-s*0.14);ctx.closePath();ctx.lineWidth=lw*2;ctx.strokeStyle=p.line;ctx.stroke();ctx.fillStyle=blk;ctx.fill();
+  ctx.fillStyle=p.line;ctx.beginPath();ctx.arc(hx,hy,s*0.19+lw,0,TAU);ctx.fill();ctx.fillStyle=blk;ctx.beginPath();ctx.arc(hx,hy,s*0.19,0,TAU);ctx.fill();
+  ctx.fillStyle=wht;ell(ctx,hx+s*0.05,hy-s*0.02,s*0.04,s*0.15,0);ctx.fill();
+  ctx.fillStyle=p.line;ell(ctx,hx+s*0.17,hy+s*0.07,s*0.13+lw,s*0.085+lw,0);ctx.fill();ctx.fillStyle=wht;ell(ctx,hx+s*0.17,hy+s*0.07,s*0.13,s*0.085,0);ctx.fill();
+  ctx.fillStyle="#141010";ctx.beginPath();ctx.arc(hx+s*0.29,hy+s*0.04,s*0.04,0,TAU);ctx.fill();
+  ctx.fillStyle=p.line;ctx.beginPath();ctx.moveTo(hx+s*0.02,hy-s*0.14);ctx.lineTo(hx+s*0.06,hy-s*(0.33-ear*0.12));ctx.lineTo(hx+s*0.15,hy-s*0.12);ctx.closePath();ctx.lineWidth=lw*2;ctx.stroke();ctx.fillStyle=blk;ctx.fill();
+  if(sleep){ctx.strokeStyle=wht;ctx.lineWidth=max(1,s*0.025);ctx.beginPath();ctx.arc(hx+s*0.07,hy-s*0.05,s*0.04,0.2,PI-0.2);ctx.stroke();
+    ctx.fillStyle=VIEW?"#f2e8cc":pal().lab;ctx.font="700 "+max(9,s*0.22)+"px "+labelFont();ctx.textAlign="left";var zz=(t*0.6)%1;ctx.globalAlpha=1-zz;ctx.fillText("z",hx+s*0.2,hy-s*0.35-zz*s*0.3);ctx.globalAlpha=max(0,0.8-zz);ctx.fillText("z",hx+s*0.36,hy-s*0.55-zz*s*0.3);ctx.globalAlpha=1;}
+  else{ctx.fillStyle="#ffffff";ctx.beginPath();ctx.arc(hx+s*0.08,hy-s*0.05,s*0.05,0,TAU);ctx.fill();ctx.fillStyle="#2a1a0a";ctx.beginPath();ctx.arc(hx+s*0.1,hy-s*0.045,s*0.028,0,TAU);ctx.fill();}
+  ctx.restore();}
+function drawTerminal(x,y,s,on){ctx.save();ctx.translate(x,y);var w=s*0.5,h=s*1.1;ctx.fillStyle="#2c3a52";ctx.strokeStyle="#9fb4d8";ctx.lineWidth=2;ctx.fillRect(-w/2,-h,w,h);ctx.strokeRect(-w/2,-h,w,h);
+  ctx.fillStyle=on?"#8fc8ff":"#6a7a96";ctx.font="900 "+round(s*0.55)+"px "+labelFont();ctx.textAlign="center";ctx.fillText("-",0,-h*0.38);ctx.restore();}
+function drawLadder(){var p=pal();proj(0.56,0.06);var bx=PX,by=PY,k=PK,h=SPX*1.9*k,w=SPX*0.45*k,lean=SPX*0.5*k;ctx.lineCap="round";
+  for(var pass=0;pass<2;pass++){ctx.strokeStyle=pass?p.wood:p.line;ctx.lineWidth=pass?max(2,SPX*0.09*k):max(2,SPX*0.09*k)+2.5;ctx.beginPath();
+    ctx.moveTo(bx-w/2,by);ctx.lineTo(bx-w/2+lean,by-h);ctx.moveTo(bx+w/2,by);ctx.lineTo(bx+w/2+lean,by-h);
+    for(var r=1;r<6;r++){var f=r/6;ctx.moveTo(bx-w/2+lean*f,by-h*f);ctx.lineTo(bx+w/2+lean*f,by-h*f);}ctx.stroke();}
+  if(LABELS&&W>=300)label("the ladder",bx+lean,by-h-FS*0.5,"center");}
+
+function render(){
+  if(bgDirty)paintBG();
+  var p=pal(),i,s,o,n=sheep.length,t=simT;
+  ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.drawImage(BG,0,0);ctx.setTransform(DPR,0,0,DPR,0,0);
+  var dogOn=sim.dog,dogX=-0.05,dogY=0.55,awake=dogOn&&!(cur===6&&!R7.open);
+  /* ground decals: influence rings, the front, field arrows, trail, shadows */
+  if(awake&&sim.V>0&&!(cur===6&&ROOM.p.mode===1)){var vig=min(1,sim.V/8);
+    for(i=0;i<3;i++){var ph=((t*0.45)+i/3)%1,r=0.04+ph*0.55,a=(1-ph)*0.5*vig;if(cur===6)r=min(r,sim.front-dogX);if(r<=0.02)continue;
+      ctx.strokeStyle=VIEW?"rgba(143,200,255,"+a+")":"rgba(255,244,200,"+a+")";ctx.lineWidth=max(1.2,SPX*0.06);ctx.beginPath();
+      for(var j=0;j<=20;j++){var an=-PI/2+PI*j/20,wx=dogX+r*cos(an),wy=dogY+r*sin(an);if(wy<-0.02)wy=-0.02;if(wy>1.03)wy=1.03;proj(wx,wy);if(j)ctx.lineTo(PX,PY);else ctx.moveTo(PX,PY);}ctx.stroke();}}
+  if(cur===6&&R7.open&&sim.front<1.2){var fx=min(1,sim.front);ctx.beginPath();quadW(ctx,0,-0.02,fx,1.03);ctx.fillStyle=VIEW?"rgba(143,200,255,.08)":"rgba(255,236,170,.12)";ctx.fill();
+    ctx.beginPath();quadW(ctx,max(0,fx-0.025),-0.02,fx,1.03);ctx.fillStyle="rgba(216,180,100,.55)";ctx.fill();}
+  if(awake&&sim.showField&&sim.V>0){for(var gx=0;gx<6;gx++)for(var gy=0;gy<3;gy++){var ax=0.12+gx*0.15,ay=0.18+gy*0.32;if(cur===6&&ax>sim.front)continue;groundArrow(ax,ay,0.07);}}
+  if(sim.follow&&TRAIL.length>1){ctx.strokeStyle=VIEW?"rgba(255,214,110,.85)":"rgba(156,114,36,.95)";ctx.lineWidth=max(1.5,SPX*0.07);if(ctx.setLineDash)ctx.setLineDash([2,4]);ctx.beginPath();var pen=false;
+    for(i=0;i<TRAIL.length;i++){var q=TRAIL[i];if(!q){pen=false;continue;}proj(q[0],q[1]);if(pen)ctx.lineTo(PX,PY);else{ctx.moveTo(PX,PY);pen=true;}}ctx.stroke();if(ctx.setLineDash)ctx.setLineDash([]);}
+  if(!VIEW)for(i=0;i<n;i++){s=sheep[i];proj(s.x,s.y);var a0=s.x<0.04?s.x/0.04:(s.x>0.96?(1-s.x)/0.04:1);ctx.globalAlpha=a0;ctx.drawImage(SP.shadow,PX-SPX*0.5*PK,PY-SPX*0.12*PK,SPX*PK,SPX*0.32*PK);}
+  ctx.globalAlpha=1;
+  /* depth-sorted objects */
+  var m=0;for(i=0;i<n;i++){ITEMS[m]=ITEMS[m]||{};ITEMS[m].y=sheep[i].y;ITEMS[m].k=0;ITEMS[m].i=i;m++;}
+  for(i=0;i<obs.length;i++){ITEMS[m]=ITEMS[m]||{};ITEMS[m].y=obs[i].y;ITEMS[m].k=1;ITEMS[m].i=i;m++;}
+  ITEMS[m]=ITEMS[m]||{};ITEMS[m].y=dogY;ITEMS[m].k=2;ITEMS[m].i=0;m++;
+  if(ROOM.ladder&&!VIEW){ITEMS[m]=ITEMS[m]||{};ITEMS[m].y=0.06;ITEMS[m].k=3;ITEMS[m].i=0;m++;}
+  var L=ITEMS.slice(0,m);L.sort(function(a,b){return a.y-b.y;});
+  for(var z=0;z<L.length;z++){var it=L[z];
+    if(it.k===0){s=sheep[it.i];proj(s.x,s.y);var al=s.x<0.04?s.x/0.04:(s.x>0.96?(1-s.x)/0.04:1);ctx.globalAlpha=al;
+      if(VIEW){var er=SPX*0.17*PK;ctx.drawImage(SP.gold,PX-er*2.4,PY-SPX*0.35*PK-er*2.4,er*4.8,er*4.8);ctx.drawImage(SP.elec,PX-er,PY-SPX*0.35*PK-er,er*2,er*2);}
+      else{var fr=(floor(s.ph)&1),spr=SP.sheep[(s.face<0?2:0)+fr],dw=spr.c.width/DPR*PK,dh=spr.c.height/DPR*PK,bob=fr?SPX*0.035*PK:0;
+        ctx.drawImage(spr.c,PX-spr.ax*dw,PY-spr.ay*dh-bob,dw,dh);}
+      if(sim.follow&&it.i===0){ctx.globalAlpha=1;ctx.strokeStyle=VIEW?"#ffd66e":"#d8b464";ctx.lineWidth=max(2,SPX*0.09);ell(ctx,PX,PY-(VIEW?SPX*0.35*PK:0),SPX*0.55*PK,SPX*0.2*PK,0);ctx.stroke();}
+      ctx.globalAlpha=1;}
+    else if(it.k===1){o=obs[it.i];proj(o.x,o.y);var D=(o.r+SR*0.5)*2*PW*1.25,jx=o.shake*sin(t*70+o.seed)*SPX*0.06;
+      if(VIEW){var rr=D*0.42;ctx.drawImage(SP.ion,PX-rr+jx,PY-rr-D*0.3,rr*2,rr*2);}
+      else{var os=SP.obs[o.type],sc=D/(SPX*DPR),ow=os.c.width*sc,oh=os.c.height*sc;ctx.drawImage(os.c,PX-os.ax*ow+jx,PY-os.ay*oh,ow,oh);}
+      if(o.heat>0.03&&sim.heatOn){var gw=D*(1.4+o.heat*0.8);ctx.globalAlpha=min(1,o.heat);ctx.drawImage(SP.warm,PX-gw/2+jx,PY-gw*0.55-D*0.2,gw,gw);ctx.globalAlpha=1;}}
+    else if(it.k===2){if(!dogOn)continue;proj(dogX,dogY);if(VIEW)drawTerminal(PX,PY,SPX*1.6*PK,awake);else drawDog(PX,PY,SPX*1.55*PK,awake?min(1,sim.V/8):0,!awake,t);}
+    else if(it.k===3)drawLadder();}
+  ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(FG,0,0);ctx.setTransform(DPR,0,0,DPR,0,0);
+  if(ROOM.ladder&&VIEW){/* the ladder, set aside */var lx=W*0.04,ly=H*0.95;ctx.strokeStyle="#a4713f";ctx.lineWidth=max(2,SPX*0.08);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx+SPX*2.2,ly);ctx.moveTo(lx,ly-SPX*0.35);ctx.lineTo(lx+SPX*2.2,ly-SPX*0.35);for(i=0;i<6;i++){ctx.moveTo(lx+i*SPX*0.42,ly);ctx.lineTo(lx+i*SPX*0.42,ly-SPX*0.35);}ctx.stroke();}
+  /* overlays: lamp, energy glints, sky arrows, labels */
+  if(ROOM.lamp){var Lm=M.lamp,lr=LAMP.r;if(Lm>0.02){var gs=lr*(5+Lm*9);ctx.globalAlpha=min(1,Lm);ctx.drawImage(SP.lampg,LAMP.x-gs/2,LAMP.y-gs/2,gs,gs);ctx.globalAlpha=1;}
+    ctx.fillStyle=Lm>0.06?"rgb(255,"+round(170+70*min(1,Lm))+","+round(90+110*min(1,Lm))+")":(VIEW?"#5c6a80":"#e4dcc6");ctx.strokeStyle=VIEW?"#9fb4d8":p.line;ctx.lineWidth=max(1.2,lr*0.2);
+    ctx.beginPath();ctx.arc(LAMP.x,LAMP.y,lr,0,TAU);ctx.fill();ctx.stroke();
+    ctx.strokeStyle=Lm>0.06?"#fff6d0":"#8a7b60";ctx.lineWidth=max(1,lr*0.14);ctx.beginPath();ctx.moveTo(LAMP.x-lr*0.45,LAMP.y+lr*0.2);ctx.lineTo(LAMP.x-lr*0.2,LAMP.y-lr*0.3);ctx.lineTo(LAMP.x,LAMP.y+lr*0.15);ctx.lineTo(LAMP.x+lr*0.2,LAMP.y-lr*0.3);ctx.lineTo(LAMP.x+lr*0.45,LAMP.y+lr*0.2);ctx.stroke();
+    if(LABELS&&W>=300)label(VIEW?"lamp filament":"the lamp",LAMP.x,LAMP.y-lr*1.8,"center");}
+  if((cur===6||cur===7)&&awake&&sim.V>0){var reach=cur===6?min(1.08,sim.front):1.08,ng=Q.glints,hgt=SPX*0.85*0.78;
+    for(i=0;i<ng;i++){var gx2=(t*(cur===6&&ROOM.p.mode===0?0.07:0.9)+i/ng)%1*1.12-0.04;if(gx2>reach)continue;proj(gx2,-0.03);var gr2=SPX*0.35*PK;ctx.drawImage(SP.gold,PX-gr2,PY-hgt*PK-gr2,gr2*2,gr2*2);}
+    if(LABELS&&W>=380&&cur===6){proj(0.5,-0.03);label("energy, carried by the field",PX,PY-SPX*1.4*PK,"center","#ffe6a0");}}
+  var ay1=max(FS*1.6,gTop*0.24),ay2=max(FS*3.4,gTop*0.56);
+  if(VIEW){ay1=max(ay1,FS*3.8);ay2=max(ay2,FS*5.6);}
+  if(cur===2&&awake){skyArrow(ay1,W*0.32,W*0.68,"#fff2c4","push on the sheep");if(sim.showField)skyArrow(ay2,W*0.68,W*0.32,"#e9c76c","the field, by convention");}
+  else if(awake&&cur>=3&&cur!==6){var f2=cl(M.vx/(VTH*sim.temp),0,1.2);if(f2>0.01)skyArrow(ay1,W*0.3,W*0.3+W*0.4*f2,"#fff2c4","drift of the flock");}
+  if(LABELS&&W>=300){
+    if(cur===6&&!R7.open){proj(0.5,0.5);label(VIEW?"no field yet":"the gate is shut",PX,ay2+FS*0.6,"center");}
+    if(cur>=2&&dogOn){proj(dogX,dogY+0.32);label(VIEW?"negative terminal (-)":"the dog's end (-)",PX+FS,PY+FS*0.2,"left");}
+    if(cur>=2){proj(0.97,1.0);label(VIEW?"positive end (+)":"far gate (+)",PX,PY-SPX*1.3*PK,"right");}}
+}
+
+/* ================= main loop and quality governor ================= */
+var Q={glints:6},last=0,ema=16,slowN=0,roAcc=0,frameN=0;
+function loop(ts){requestAnimationFrame(loop);
+  var raw=ts-last;last=ts;if(!(raw>0)||raw>400)raw=16.7;
+  var running=!paused&&visible&&!document.hidden;
+  if(!running&&!dirty)return;
+  if(running){var dt=min(0.05,raw/1000),ns=dt>0.025?2:1,h=dt/ns,k;for(k=0;k<ns;k++)tick(h);measure(dt);}
+  render();dirty=false;frameN++;
+  roAcc+=raw;if(roAcc>(CALM?950:280)){roAcc=0;updateReadout();}
+  if(running){ema=ema*0.95+raw*0.05;if(ema>45&&!LITE&&!AUTOLITE){slowN++;if(slowN>90){AUTOLITE=true;applyLite();}}else slowN=0;}}
+function tick(dt){
+  if(cur===6){if(R7.open){var sp=ROOM.p.mode===1?60:0.075;sim.front=min(9,sim.front+sp*dt);R7.t+=dt;if(R7.lit<0&&sim.front>=GATE)R7.lit=R7.t;}else sim.front=-1;}
+  else sim.front=9;
+  var mv=step(dt);
+  if(sim.follow){trailT+=dt;if(trailT>0.07){trailT=0;var s=sheep[0],lp=TRAIL.length?TRAIL[TRAIL.length-1]:null;if(lp&&abs(lp[0]-s.x)>0.5)TRAIL.push(null);TRAIL.push([s.x,s.y]);if(TRAIL.length>150)TRAIL.shift();}}
+  /* the lamp */
+  var target=0;if(ROOM.lamp){if(cur===6)target=(R7.open&&sim.front>=GATE)?cl(M.P/PREF,0.55,1.1):0;else target=cl(M.P/PREF,0,1.25);}
+  M.lamp+=(target-M.lamp)*(1-exp(-dt*(cur===6?8:2.5)));
+  if(ROOM.log)logTick(dt,mv);}
+
+/* ================= the logbook (room VI) ================= */
+var LOG=[],meas={key:"",t:0,sum:0,state:"waiting for the flock to settle"};
+function logTick(dt,mv){var key=sim.V.toFixed(1)+"|"+sim.R.toFixed(1);
+  if(key!==meas.key){meas.key=key;meas.t=0;meas.sum=0;meas.done=false;meas.state="waiting for the flock to settle";return;}
+  if(meas.done)return;meas.t+=dt;
+  if(sim.V<0.5){meas.state="the dog is idle; nothing to count";return;}
+  if(meas.t<2.5){meas.state="waiting for the flock to settle";return;}
+  meas.sum+=mv*dt;var span=meas.t-2.5,need=10;
+  meas.state="counting, "+round(min(1,span/need)*100)+" per cent done";
+  if(span>=need){var I=sheep.length*(meas.sum/span)*60,j;for(j=LOG.length-1;j>=0;j--)if(LOG[j].V===sim.V&&LOG[j].R===sim.R)LOG.splice(j,1);
+    LOG.push({V:sim.V,R:sim.R,I:I});meas.state="reading entered; change a lever for another";meas.done=true;drawLog();say("Reading entered in the logbook: vigour "+sim.V.toFixed(1)+" volts, roughness "+sim.R.toFixed(1)+", "+round(I)+" sheep a minute.");}}
+var logcv=$("logcv");
+function drawLog(){if(!ROOM.log)return;var c=logcv,w=max(120,c.clientWidth),h=max(80,c.clientHeight),dp=min(window.devicePixelRatio||1,2),g=c.getContext("2d");
+  c.width=round(w*dp);c.height=round(h*dp);g.setTransform(dp,0,0,dp,0,0);
+  var ink=cssVar2("--ink"),ink2=cssVar2("--ink-2"),rule=cssVar2("--rule"),S=[cssVar2("--s1"),cssVar2("--s2"),cssVar2("--s3"),cssVar2("--s4"),cssVar2("--s5")];
+  var fs=cl(w/38,9,12),padL=fs*3.4,padB=fs*2.6,padT=fs*0.8,padR=fs*0.8,pw=w-padL-padR,ph=h-padT-padB,i;
+  var Imax=60;LOG.forEach(function(e){Imax=max(Imax,e.I*1.1);});Imax=Math.ceil(Imax/50)*50;
+  g.font="600 "+fs+"px "+labelFont();g.fillStyle=ink2;g.strokeStyle=rule;g.lineWidth=1;g.textAlign="right";g.textBaseline="middle";
+  var steps=Imax<=150?50:(Imax<=400?100:200);for(var v=0;v<=Imax;v+=steps){var y=padT+ph*(1-v/Imax);g.beginPath();g.moveTo(padL,y);g.lineTo(padL+pw,y);g.stroke();g.fillText(""+v,padL-4,y);}
+  g.textAlign="center";g.textBaseline="top";for(var vv=0;vv<=12;vv+=2){var x=padL+pw*vv/12;g.beginPath();g.moveTo(x,padT);g.lineTo(x,padT+ph);g.stroke();g.fillText(""+vv,x,padT+ph+3);}
+  g.fillText("vigour of the dog, volts",padL+pw/2,padT+ph+fs*1.35);
+  g.save();g.translate(fs*0.75,padT+ph/2);g.rotate(-PI/2);g.fillText("sheep a minute",0,0);g.restore();
+  var Rs=[];LOG.forEach(function(e){if(Rs.indexOf(e.R)<0)Rs.push(e.R);});Rs.sort(function(a,b){return a-b;});
+  var leg=$("legend");leg.innerHTML="";
+  Rs.forEach(function(R,ix){var col=S[ix%5],sx=0,sxx=0,cnt=0;LOG.forEach(function(e){if(e.R!==R)return;sx+=e.V*e.I;sxx+=e.V*e.V;cnt++;});
+    var slope=sxx>0?sx/sxx:0;if(slope>0){g.strokeStyle=col;g.lineWidth=1.6;g.globalAlpha=0.7;g.beginPath();g.moveTo(padL,padT+ph);var Ve=min(12,Imax/slope);g.lineTo(padL+pw*Ve/12,padT+ph*(1-slope*Ve/Imax));g.stroke();g.globalAlpha=1;}
+    LOG.forEach(function(e){if(e.R!==R)return;var x=padL+pw*e.V/12,y=padT+ph*(1-cl(e.I,0,Imax)/Imax);g.fillStyle=col;g.beginPath();g.arc(x,y,fs*0.38,0,TAU);g.fill();g.strokeStyle=ink;g.lineWidth=1;g.stroke();});
+    var Rm=slope>0?(sheep.length*60*AUNIT/(NU0*slope)):0,li=document.createElement("li");
+    li.innerHTML='<b style="background:'+col+'"></b><span>Roughness '+R.toFixed(1)+': '+cnt+' reading'+(cnt>1?'s':'')+(slope>0?', slope gives a resistance of '+Rm.toFixed(1)+' ohms':'')+'</span>';leg.appendChild(li);});
+  if(!Rs.length){g.fillStyle=ink2;g.textAlign="center";g.textBaseline="middle";g.font="italic "+fs+"px "+bodyFont();g.fillText("No readings yet. Leave the levers alone and the keeper will count.",padL+pw/2,padT+ph/2);
+    var li2=document.createElement("li");li2.textContent="No readings yet.";leg.appendChild(li2);}
+  logcv.setAttribute("aria-label","Logbook chart: "+LOG.length+" readings of sheep a minute against the dog's vigour. "+leg.textContent);}
+function cssVar2(n){try{return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||"#555";}catch(e){return "#555";}}
+
+/* ================= building a room ================= */
+var plan=$("plan"),ctls=$("ctls"),ro=$("ro"),roMeta=[];
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined)e.innerHTML=h;return e;}
+function applyP(){var P=ROOM.p;sim.dog=!!P.dog;sim.V=P.V||0;if(abs((P.R||1)-sim.R)>1e-6||obs.length!==cl(round(((P.R||1)-1)*KOBS),0,POOL.length))setR(P.R||1);
+  if(abs((P.temp||1)-sim.temp)>1e-6)setTemp(P.temp||1);sim.showField=!!P.showField;sim.heatOn=true;
+  var f=!!P.follow;if(f!==sim.follow){TRAIL.length=0;}sim.follow=f;
+  if(cur===6){if(P.open!==R7.open){R7.open=P.open;R7.lit=-1;R7.t=0;sim.front=P.open?0:-1;}}}
+function buildControls(){ctls.innerHTML="";var P=ROOM.p;
+  if(!ROOM.ctl.length){ctls.appendChild(el("p","none","No levers in this room. Watch the flock, then proceed."));return;}
+  ROOM.ctl.forEach(function(c){var id="c_"+ROOM.id+"_"+c.k,row=el("div","ctl");
+    if(c.t==="range"){var lb=el("label");lb.htmlFor=id;lb.appendChild(document.createTextNode(c.label));var out=el("output");out.htmlFor=id;lb.appendChild(out);
+      var inp=el("input");inp.type="range";inp.id=id;inp.min=c.min;inp.max=c.max;inp.step=c.step;inp.value=P[c.k];
+      var upd=function(){P[c.k]=parseFloat(inp.value);out.textContent=c.fmt(P[c.k]);inp.setAttribute("aria-valuetext",c.fmt(P[c.k]));};upd();
+      inp.addEventListener("input",function(){upd();applyP();updateReadout();dirty=true;});row.appendChild(lb);row.appendChild(inp);}
+    else if(c.t==="check"){row=el("label","chk");var ck=el("input");ck.type="checkbox";ck.id=id;ck.checked=!!P[c.k];ck.addEventListener("change",function(){P[c.k]=ck.checked;applyP();dirty=true;});row.appendChild(ck);row.appendChild(document.createTextNode(c.label));}
+    else if(c.t==="seg"){row.appendChild(el("div","lbl",c.label));var sg=el("div","seg");sg.setAttribute("role","group");sg.setAttribute("aria-label",c.label);var bs=[];
+      c.opts.forEach(function(o,ix){var b=el("button","",o);b.type="button";b.setAttribute("aria-pressed",ix===P[c.k]?"true":"false");
+        b.addEventListener("click",function(){P[c.k]=ix;bs.forEach(function(x,j){x.setAttribute("aria-pressed",j===ix?"true":"false");});if(c.act)c.act(P);applyP();refreshButtons();updateReadout();dirty=true;});bs.push(b);sg.appendChild(b);});row.appendChild(sg);}
+    else if(c.t==="btn"){var b2=el("button","btn");b2.type="button";b2.id=id;b2.textContent=c.label(P);b2.addEventListener("click",function(){c.act(P);applyP();refreshButtons();updateReadout();dirty=true;say(b2.textContent);});row.appendChild(b2);}
+    ctls.appendChild(row);});}
+function refreshButtons(){ROOM.ctl.forEach(function(c){if(c.t!=="btn")return;var b=$("c_"+ROOM.id+"_"+c.k);if(b)b.textContent=c.label(ROOM.p);});$("bView").textContent=VIEW?"Show the sheep":"Show the electrons";$("bView").setAttribute("aria-pressed",VIEW?"true":"false");}
+function buildReadout(){ro.innerHTML="";roMeta=[];ROOM.rows.forEach(function(r){var d=el("div"),dt=el("dt","",""),dd=el("dd");dt.textContent=r[0];d.appendChild(dt);d.appendChild(dd);ro.appendChild(d);roMeta.push({dd:dd,h:0,v:null});});updateReadout();}
+function updateReadout(){for(var i=0;i<roMeta.length;i++){var m=roMeta[i],v=ROOM.rows[i][1]();if(v!==m.v){m.dd.textContent=v;m.v=v;var hh=m.dd.offsetHeight;if(hh>m.h){m.h=hh;m.dd.style.minHeight=hh+"px";}}}}
+function buildPlan(){ROOMS.forEach(function(r,i){var li=el("li"),b=el("button","","<i>"+r.n+"</i>"+r.tab);b.type="button";b.setAttribute("aria-label","Room "+r.n+": "+r.title);b.addEventListener("click",function(){go(i,true);});li.appendChild(b);plan.appendChild(li);});}
+var seen={};
+function go(i,user){i=cl(i,0,ROOMS.length-1);cur=i;ROOM=ROOMS[i];seen[i]=1;
+  var bs=plan.querySelectorAll("button");for(var k=0;k<bs.length;k++){if(k===i)bs[k].setAttribute("aria-current","step");else bs[k].removeAttribute("aria-current");if(seen[k])bs[k].classList.add("seen");}
+  $("roomNo").textContent="Room "+ROOM.n+" of VIII";$("roomTitle").textContent=ROOM.title;$("plaque").textContent=ROOM.plaque;
+  $("plK").textContent="From the essay, paragraph "+ROOM.n;$("essay").textContent=ROOM.text;$("dirs").textContent=ROOM.dirs;$("note").innerHTML=ROOM.note;
+  cv.setAttribute("aria-label","Diorama for room "+ROOM.n+". "+ROOM.aria);
+  var pv=$("dPrev"),nx=$("dNext");pv.hidden=i===0;nx.hidden=i===ROOMS.length-1;if(i>0)$("dPrevT").textContent="Room "+ROOMS[i-1].n+": "+ROOMS[i-1].title;if(i<ROOMS.length-1)$("dNextT").textContent="Room "+ROOMS[i+1].n+": "+ROOMS[i+1].title;
+  if(i===6){ROOM.p.open=false;R7.open=false;R7.lit=-1;R7.t=0;sim.front=-1;}
+  M.out=0;M.inn=0;TRAIL.length=0;tauV=ROOM.log?8:5;
+  applyP();buildControls();buildReadout();refreshButtons();
+  $("logwrap").hidden=!ROOM.log;if(ROOM.log){meas.key="";meas.done=false;requestAnimationFrame(drawLog);}
+  paused=RMOT;syncPause();bgDirty=true;dirty=true;
+  try{if(history.replaceState)history.replaceState(null,"","#"+ROOM.id);}catch(e){}
+  if(user){var t=$("roomTitle");try{t.focus({preventScroll:true});}catch(e){t.focus();}try{$("room").scrollIntoView({block:"start"});}catch(e){}say("Room "+ROOM.n+" of eight: "+ROOM.title+".");}
+  lsSet("room",""+i);}
+function say(m){var e=$("sr");e.textContent="";setTimeout(function(){e.textContent=m;},60);}
+function syncPause(){var b=$("bPause");b.textContent=paused?"Play":"Pause";b.setAttribute("aria-pressed",paused?"true":"false");}
+function setView(v){VIEW=v;bgDirty=true;dirty=true;refreshButtons();say(v?"Showing the electrons in a copper lattice.":"Showing the sheep in their pasture.");}
+function applyLite(){var want=(LITE||AUTOLITE)?NLITE:NFULL;if(sheep.length!==want){makeFlock(want);LOG.length=0;if(ROOM.log)drawLog();}Q.glints=(LITE||AUTOLITE)?3:6;
+  $("liteCap").textContent=AUTOLITE&&!LITE?"This machine seemed to struggle, so lite mode has been switched on for this visit.":"";layout();}
+
+/* ================= wiring ================= */
+$("bPause").addEventListener("click",function(){paused=!paused;syncPause();dirty=true;});
+$("bView").addEventListener("click",function(){setView(VIEW?0:1);});
+$("dPrev").addEventListener("click",function(){go(cur-1,true);});
+$("dNext").addEventListener("click",function(){go(cur+1,true);});
+document.addEventListener("keydown",function(e){if(e.ctrlKey||e.metaKey||e.altKey)return;var t=e.target,tn=t&&t.tagName;if(tn==="INPUT"||tn==="SELECT"||tn==="TEXTAREA")return;
+  if(e.key==="[")go(cur-1,true);else if(e.key==="]")go(cur+1,true);else if(e.key==="p"||e.key==="P"){paused=!paused;syncPause();dirty=true;say(paused?"Paused.":"Playing.");}});
+window.addEventListener("hashchange",function(){var h=location.hash.replace("#","");for(var i=0;i<ROOMS.length;i++)if(ROOMS[i].id===h&&i!==cur)go(i,true);});
+if(window.ResizeObserver){var rq=0;new ResizeObserver(function(){if(rq)return;rq=requestAnimationFrame(function(){rq=0;layout();if(ROOM.log)drawLog();});}).observe(stage);}
+window.addEventListener("resize",function(){layout();if(ROOM.log)drawLog();});
+if(window.IntersectionObserver){var VIS={};var io=new IntersectionObserver(function(en){en.forEach(function(x){VIS[x.target.className]=x.isIntersecting;});visible=false;for(var k in VIS)if(VIS[k])visible=true;});io.observe(document.querySelector(".case"));io.observe(document.querySelector(".levers"));}
+
+/* settings */
+var sPop=$("setPop"),sBtn=$("setBtn"),root=document.documentElement,MODE=lsGet("mode","system");
+function applyMode(){if(MODE==="system")root.removeAttribute("data-theme");else root.setAttribute("data-theme",MODE);
+  Array.prototype.forEach.call(sPop.querySelectorAll("[data-mode]"),function(b){b.setAttribute("aria-pressed",b.getAttribute("data-mode")===MODE?"true":"false");});readTheme();}
+Array.prototype.forEach.call(sPop.querySelectorAll("[data-mode]"),function(b){b.addEventListener("click",function(){MODE=b.getAttribute("data-mode");lsSet("mode",MODE);applyMode();});});
+function setOpen(o){sPop.hidden=!o;sBtn.setAttribute("aria-expanded",o?"true":"false");if(o){var f=sPop.querySelector("button");if(f)f.focus();}}
+sBtn.addEventListener("click",function(){setOpen(sPop.hidden);});
+$("sClose").addEventListener("click",function(){setOpen(false);sBtn.focus();});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!sPop.hidden){setOpen(false);sBtn.focus();}});
+document.addEventListener("pointerdown",function(e){if(!sPop.hidden&&!sPop.contains(e.target)&&!sBtn.contains(e.target))setOpen(false);});
+var sCalm=$("sCalm"),sLab=$("sLab"),sLite=$("sLite"),sRM=$("sRM");
+var OSRM=false;try{OSRM=window.matchMedia("(prefers-reduced-motion: reduce)").matches;}catch(e){}
+CALM=lsGet("calm","1")!=="0";LABELS=lsGet("lab","1")!=="0";LITE=lsGet("lite","0")==="1";RMOT=lsGet("rm",OSRM?"1":"0")==="1";
+try{var hc=navigator.hardwareConcurrency||4,dm=navigator.deviceMemory||4;if((hc<=2||dm<=1)&&lsGet("lite",null)===null)AUTOLITE=true;}catch(e){}
+sCalm.checked=CALM;sLab.checked=LABELS;sLite.checked=LITE;sRM.checked=RMOT;
+sCalm.addEventListener("change",function(){CALM=sCalm.checked;lsSet("calm",CALM?"1":"0");});
+sLab.addEventListener("change",function(){LABELS=sLab.checked;lsSet("lab",LABELS?"1":"0");dirty=true;});
+sLite.addEventListener("change",function(){LITE=sLite.checked;if(!LITE)AUTOLITE=false;lsSet("lite",LITE?"1":"0");applyLite();});
+sRM.addEventListener("change",function(){RMOT=sRM.checked;lsSet("rm",RMOT?"1":"0");paused=RMOT;syncPause();dirty=true;});
+$("sReset").addEventListener("click",function(){["mode","calm","lab","lite","rm","room"].forEach(lsDel);MODE="system";CALM=true;LABELS=true;LITE=false;AUTOLITE=false;RMOT=OSRM;
+  sCalm.checked=true;sLab.checked=true;sLite.checked=false;sRM.checked=RMOT;applyMode();applyLite();paused=RMOT;syncPause();});
+try{var mq=window.matchMedia("(prefers-color-scheme: dark)");if(mq.addEventListener)mq.addEventListener("change",readTheme);else if(mq.addListener)mq.addListener(readTheme);}catch(e){}
+
+/* boot */
+makePool();setR(1.8);makeFlock((LITE||AUTOLITE)?NLITE:NFULL);Q.glints=(LITE||AUTOLITE)?3:6;
+buildPlan();layout();applyMode();
+for(var w=0;w<60;w++)step(0.05); /* let the flock spread out before the first look */
+var start=0,h0=location.hash.replace("#","");for(var r=0;r<ROOMS.length;r++)if(ROOMS[r].id===h0)start=r;
+go(start,false);
+requestAnimationFrame(loop);
+})();
+</script>
+
+</body>
+</html>
